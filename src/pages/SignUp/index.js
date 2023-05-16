@@ -41,7 +41,7 @@ export default function SignUp(){
           <button type="submit">Cadastrar</button>
         </form>
 
-        <Link to="/">Já possui uma conta? <strong>Entrar</strong></Link>
+        <Link to="/">Já possui uma conta? <strong>Login</strong></Link>
 
       </div>
     </div>

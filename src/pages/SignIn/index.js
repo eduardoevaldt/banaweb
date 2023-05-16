@@ -18,7 +18,7 @@ export default function SignIn(){
         </div>
 
         <form>
-          <h1 className="title-entrar">Entrar</h1>
+          <h1 className="title-entrar">Login</h1>
           <input 
             type="text" 
             placeholder="email@email.com"
