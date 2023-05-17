@@ -1,6 +1,6 @@
 import { useState, createContext, useEffect } from 'react';
 import { auth, db } from '../services/firebaseConnection';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 import { useNavigate } from 'react-router-dom'
@@ -11,8 +11,26 @@ export const AuthContext = createContext({});
 function AuthProvider({ children }){
   const [user, setUser] = useState(null)
   const [loadingAuth, setLoadingAuth] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function loadUser(){
+      const storageUser = localStorage.getItem('@banawebPRO')
+
+      if(storageUser){
+        setUser(JSON.parse(storageUser))
+        setLoading(false);
+      }
+
+      setLoading(false);
+
+    }
+
+    loadUser();
+  }, [])
+
 
   async function signIn(email, password){
     setLoadingAuth(true);
@@ -85,6 +103,11 @@ function AuthProvider({ children }){
     localStorage.setItem('@banawebPRO', JSON.stringify(data))
   }
 
+  async function logout(){
+    await signOut(auth);
+    localStorage.removeItem('@banawebPRO');
+    setUser(null);
+  }
 
   return(
     <AuthContext.Provider 
@@ -93,7 +116,9 @@ function AuthProvider({ children }){
         user,
         signIn,
         signUp,
-        loadingAuth
+        logout,
+        loadingAuth,
+        loading
       }}
     >
       {children}
