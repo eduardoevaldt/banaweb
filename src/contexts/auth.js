@@ -53,7 +53,7 @@ function AuthProvider({ children }){
       setUser(data);
       storageUser(data);
       setLoadingAuth(false);
-      toast.success("Bem-vindo(a) ao BanaWeb")
+      toast.success("Login efetuado com sucesso!")
       navigate("/dashboard")
     })
     .catch((error) => {
@@ -88,7 +88,7 @@ function AuthProvider({ children }){
           setUser(data);
           storageUser(data);
           setLoadingAuth(false);
-          toast.success("Seja bem-vindo ao BanaWeb")
+          toast.success("Seja bem-vindo ao BanaWeb!")
           navigate("/dashboard")
           
         })
