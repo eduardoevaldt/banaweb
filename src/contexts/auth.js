@@ -1,7 +1,10 @@
 import { useState, createContext, useEffect } from 'react';
 import { auth, db } from '../services/firebaseConnection';
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
+
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export const AuthContext = createContext({});
 
@@ -9,11 +12,39 @@ function AuthProvider({ children }){
   const [user, setUser] = useState(null)
   const [loadingAuth, setLoadingAuth] = useState(false);
 
-  function signIn(email, password){
-    console.log(email)
-    console.log(password);
-    alert("LOGADO COM SUCESSO")
+  const navigate = useNavigate();
+
+  async function signIn(email, password){
+    setLoadingAuth(true);
+
+    await signInWithEmailAndPassword(auth, email, password)
+    .then( async (value) => {
+      let uid = value.user.uid;
+
+      const docRef = doc(db, "users", uid);
+      const docSnap = await getDoc(docRef)
+
+      let data = {
+        uid: uid,
+        nome: docSnap.data().nome,
+        email: value.user.email,
+        avatarUrl: docSnap.data().avatarUrl
+      }
+
+      setUser(data);
+      storageUser(data);
+      setLoadingAuth(false);
+      toast.success("Bem-vindo(a) ao BanaWeb")
+      navigate("/dashboard")
+    })
+    .catch((error) => {
+      console.log(error);
+      setLoadingAuth(false);
+      toast.error("Email ou senha incorretos!");
+    }) 
+
   }
+
 
   // Cadastrar um novo user
   async function signUp(email, password, name){
@@ -36,8 +67,10 @@ function AuthProvider({ children }){
           };
 
           setUser(data);
-
+          storageUser(data);
           setLoadingAuth(false);
+          toast.success("Seja bem-vindo ao BanaWeb")
+          navigate("/dashboard")
           
         })
     })
@@ -46,6 +79,10 @@ function AuthProvider({ children }){
       setLoadingAuth(false);
     })
 
+  }
+
+  function storageUser(data){
+    localStorage.setItem('@banawebPRO', JSON.stringify(data))
   }
 
 
