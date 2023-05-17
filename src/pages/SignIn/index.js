@@ -32,14 +32,14 @@ export default function SignIn(){
           <h1 className="title-entrar">Login</h1>
           <input 
             type="text" 
-            placeholder="email@email.com"
+            placeholder="Email"
             value={email}
             onChange={ (e) => setEmail(e.target.value) }
           />
 
           <input 
             type="password" 
-            placeholder="********"
+            placeholder="Senha"
             value={password}
             onChange={ (e) => setPassword(e.target.value) }
           />

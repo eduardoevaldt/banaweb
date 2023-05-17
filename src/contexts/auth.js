@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 export const AuthContext = createContext({});
 
 function AuthProvider({ children }){
+
   const [user, setUser] = useState(null)
   const [loadingAuth, setLoadingAuth] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -59,7 +60,8 @@ function AuthProvider({ children }){
       console.log(error);
       setLoadingAuth(false);
       toast.error("Email ou senha incorretos!");
-    }) 
+      navigate("dashboard")
+    })
 
   }
 

@@ -31,21 +31,21 @@ export default function SignUp(){
           <h1 className="title-entrar">Nova Conta</h1>
           <input 
             type="text" 
-            placeholder="Seu nome"
+            placeholder="Nome"
             value={name}
             onChange={ (e) => setName(e.target.value) }
           />
 
           <input 
             type="text" 
-            placeholder="email@email.com"
+            placeholder="Email"
             value={email}
             onChange={ (e) => setEmail(e.target.value) }
           />
 
           <input 
             type="password" 
-            placeholder="********"
+            placeholder="Senha"
             value={password}
             onChange={ (e) => setPassword(e.target.value) }
           />
