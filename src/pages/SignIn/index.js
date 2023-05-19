@@ -49,7 +49,8 @@ export default function SignIn(){
           </button>
         </form>
 
-        <Link to="/register">Criar uma conta</Link>
+        <Link className="reset-password" to="/reset">Esqueci minha senha</Link>
+        <Link className="cadastre-se" to="/register">Ainda não tem conta? <strong>Cadastre-se</strong></Link>
 
       </div>
     </div>

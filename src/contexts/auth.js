@@ -60,7 +60,6 @@ function AuthProvider({ children }){
       console.log(error);
       setLoadingAuth(false);
       toast.error("Email ou senha incorretos!");
-      navigate("dashboard")
     })
 
   }

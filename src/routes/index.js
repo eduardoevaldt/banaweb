@@ -4,6 +4,7 @@ import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import Dashboard from '../pages/Dashboard'
 import Profile from '../pages/Profile';
+import ResetPassword from '../pages/ResetPassword'
 
 import Private from './Private'
 
@@ -12,6 +13,7 @@ function RoutesApp(){
     <Routes>
       <Route path="/" element={ <SignIn/> } />
       <Route path="/register" element={ <SignUp/> } />
+      <Route path="/reset" element={ <ResetPassword/> } />
       <Route path="/dashboard" element={ 
         <Private>
           <Dashboard/> 

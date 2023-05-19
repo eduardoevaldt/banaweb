@@ -55,7 +55,7 @@ export default function SignUp(){
           </button>
         </form>
 
-        <Link to="/">Já possui uma conta? <strong>Login</strong></Link>
+        <Link className="reset-password" to="/">Já possui uma conta? <strong>Entrar</strong></Link>
 
       </div>
     </div>
