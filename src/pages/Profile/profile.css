@@ -1,4 +1,5 @@
  .container{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     display: flex;
     background-color: #f8f8f8;
     border-radius: 5px;
@@ -8,6 +9,7 @@
   }
   
   .label-avatar{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     width: 280px;
     height: 280px;
     display: flex;
@@ -34,17 +36,20 @@
   }
   
   .form-profile img{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin-bottom: 1em;
     border-radius: 50%;
     object-fit: cover;
   }
   
   .form-profile label{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin-bottom: 0.5em;
     font-size: 1.4em;
   }
   
   .form-profile input, textarea, select{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin-bottom: 1em;
     padding: 0.7em;
     border:0;
@@ -57,16 +62,20 @@
   }
   
   .form-profile button{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     max-width: 600px;
   }
   
   .logout-btn{
-    padding: 8px 20px;
-    border: 1px solid #121212;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    padding: 4px 10px;
+    border: 2px solid #0D450C;
     background-color: transparent;
     border-radius: 5px;
-    font-size: 1.5em;
+    font-size: 1.0em;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: #0D450C;
+    font-weight: bold;
   }

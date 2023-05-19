@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import avatarImg from '../../assets/avatar.webp'
+import avatarImg from '../../assets/avatar.png'
 import { Link } from 'react-router-dom'
 
 import { AuthContext } from '../../contexts/auth'

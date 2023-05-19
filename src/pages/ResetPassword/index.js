@@ -49,7 +49,6 @@ export default function ResetPassword(){
         <Link className="cadastre-se" to="/register">Ainda não tem conta? <strong>Cadastre-se</strong></Link>
         <Link className="voltarLogin" to="/"><strong>Entrar</strong></Link>
 
-
       </div>
     </div>
   )

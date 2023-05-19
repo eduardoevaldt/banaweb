@@ -53,7 +53,7 @@ function AuthProvider({ children }){
       setUser(data);
       storageUser(data);
       setLoadingAuth(false);
-      toast.success("Login efetuado com sucesso!")
+      toast.success("Bem-vindo de volta!")
       navigate("/dashboard")
     })
     .catch((error) => {
@@ -107,6 +107,7 @@ function AuthProvider({ children }){
     await signOut(auth);
     localStorage.removeItem('@banawebPRO');
     setUser(null);
+    toast.success("Logout Efetuado!")
   }
 
   return(
@@ -118,7 +119,9 @@ function AuthProvider({ children }){
         signUp,
         logout,
         loadingAuth,
-        loading
+        loading,
+        storageUser,
+        setUser
       }}
     >
       {children}

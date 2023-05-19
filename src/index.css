@@ -1,16 +1,18 @@
 *{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 
 html, body, #root{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   height: 100%;
 }
 
 body{
   font: 14px;
-  font-family: sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   background-color: #EFEFEF;
 }
 
@@ -23,5 +25,6 @@ ul{
 }
 
 button{
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   cursor: pointer;
 }
