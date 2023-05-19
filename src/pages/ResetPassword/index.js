@@ -17,7 +17,7 @@ export default function ResetPassword(){
     function recuperationPassword(){
        sendPasswordResetEmail(auth, email)
        .then(result =>{
-        toast.success("Email de verificação enviado!")
+        toast.success("Sucesso! Verifique seu e-mail.")
        }).catch(erro =>{
         toast.error("E-mail inválido!")
        })

@@ -3,7 +3,7 @@ import Header from '../../components/Header'
 import Title from '../../components/Title'
 
 import { BsPersonCircle, BsUpload } from 'react-icons/bs'
-import avatar from '../../assets/avatar.png'
+import avatar from '../../assets/avatar.webp'
 import {AuthContext} from '../../contexts/auth'
 
 import './profile.css';
@@ -13,6 +13,8 @@ export default function Profile(){
   const { user } = useContext(AuthContext);
 
   const [avatarUrl, setAvatarUrl] = useState(user && user.avatarUrl)
+  const [email, setEmail] = useState(user && user.email);
+
 
   return(
     <div>
@@ -41,10 +43,10 @@ export default function Profile(){
         </label>
 
         <label>Nome</label>
-        <input type="text" placeholder="Seu nome" />
+        <input type="text" placeholder="Informe o nome" />
 
         <label>Email</label>
-        <input type="text" placeholder="teste@teste.com" disabled={true} />
+        <input type="text" placeholder={email}  disabled={true} />
         
         <button type="submit">Salvar</button>
       </form>
