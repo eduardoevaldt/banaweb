@@ -45,7 +45,7 @@ export default function SignIn(){
           />
 
           <button type="submit">
-            {loadingAuth ? <div class="spinner-border text-light"></div> : "Entrar"}
+            {loadingAuth ? "Carregando..." : "Entrar"}
           </button>
         </form>
 
