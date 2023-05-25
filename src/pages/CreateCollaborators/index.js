@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect} from 'react'
 import Header from '../../components/Header'
 import Title from '../../components/Title'
-import { BsPeopleFill } from 'react-icons/bs'
+import { BsPlusCircle } from 'react-icons/bs'
 import { toast } from 'react-toastify'
 
 import { db } from '../../services/firebaseConnection'
@@ -62,7 +62,7 @@ export default function CreateCollaborators(){
 
       <div className="content">
         <Title name="Cadastrar Funcionário">
-          <BsPeopleFill size={25} />
+          <BsPlusCircle size={25} />
         </Title>
 
         <div className="container">

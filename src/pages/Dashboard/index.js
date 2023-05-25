@@ -27,7 +27,7 @@ export default function Dashboard() {
         <>
           <Link to="/new" className="new">
             <BsPlus color="#FFF" size={25} />
-            Nova Tarefa
+            Adicionar
           </Link>  
 
           <table>
@@ -49,7 +49,7 @@ export default function Dashboard() {
                     Em aberto
                   </span>
                 </td>
-                <td data-label="Cadastrado">12/05/2022</td>
+                <td data-label="Cadastrado">12/05/2023</td>
                 <td data-label="#">
                   <button className="action" style={{ backgroundColor: '#3583f6' }}>
                     <BsSearch color='#FFF' size={17}/>
@@ -60,8 +60,6 @@ export default function Dashboard() {
                 </td>
               </tr>
 
-
-
               <tr>
                 <td data-label="Cliente">Informatica TECH</td>
                 <td data-label="Assunto">Suporte</td>
@@ -70,7 +68,7 @@ export default function Dashboard() {
                     Concluído
                   </span>
                 </td>
-                <td data-label="Cadastrado">12/05/2022</td>
+                <td data-label="Cadastrado">12/05/2023</td>
                 <td data-label="#">
                   <button className="action" style={{ backgroundColor: '#3583f6' }}>
                     <BsSearch color='#FFF' size={17}/>

@@ -7,6 +7,7 @@ import Profile from '../pages/Profile';
 import ResetPassword from '../pages/ResetPassword'
 import ListCollaborators from '../pages/ListCollaborators';
 import CreateCollaborators from '../pages/CreateCollaborators';
+import New from '../pages/New';
 
 import Private from './Private'
 
@@ -34,6 +35,11 @@ function RoutesApp(){
       <Route path="/create-collaborators" element={ 
         <Private>
           <CreateCollaborators/> 
+        </Private>
+      } />
+      <Route path="/new" element={ 
+        <Private>
+          <New/> 
         </Private>
       } />
     </Routes>
