@@ -16,17 +16,17 @@ export default function Header(){
       </div>
 
       <Link to="/dashboard">
-        <BsHouseFill color="#FFF" size={24} />
+        <BsHouseFill color="#FFF" size={20} />
         Tarefas
       </Link>
 
-      <Link to="/collaborators">
-        <BsPeopleFill color="#FFF" size={24} />
+      <Link to="/list-collaborators">
+        <BsPeopleFill color="#FFF" size={20} />
         Funcionários
       </Link>
 
       <Link to="/profile">
-        <BsPersonCircle color="#FFF" size={24} />
+        <BsPersonCircle color="#FFF" size={20} />
         Perfil
       </Link>
     </div>

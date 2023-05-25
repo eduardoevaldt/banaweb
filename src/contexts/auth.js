@@ -107,7 +107,6 @@ function AuthProvider({ children }){
     await signOut(auth);
     localStorage.removeItem('@banawebPRO');
     setUser(null);
-    toast.success("Logout Efetuado!")
   }
 
   return(

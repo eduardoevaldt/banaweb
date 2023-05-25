@@ -51,7 +51,7 @@ export default function SignUp(){
           />
 
           <button type="submit">
-            {loadingAuth ? 'Carregando...' : 'Cadastrar'}
+            {loadingAuth ? <div class="spinner-border text-light"></div> : 'Cadastrar'}
           </button>
         </form>
 

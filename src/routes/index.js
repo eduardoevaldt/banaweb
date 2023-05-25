@@ -5,6 +5,8 @@ import SignUp from '../pages/SignUp';
 import Dashboard from '../pages/Dashboard'
 import Profile from '../pages/Profile';
 import ResetPassword from '../pages/ResetPassword'
+import ListCollaborators from '../pages/ListCollaborators';
+import CreateCollaborators from '../pages/CreateCollaborators';
 
 import Private from './Private'
 
@@ -22,6 +24,16 @@ function RoutesApp(){
       <Route path="/profile" element={ 
         <Private>
           <Profile/> 
+        </Private>
+      } />
+      <Route path="/list-collaborators" element={ 
+        <Private>
+          <ListCollaborators/> 
+        </Private>
+      } />
+      <Route path="/create-collaborators" element={ 
+        <Private>
+          <CreateCollaborators/> 
         </Private>
       } />
     </Routes>

@@ -76,7 +76,7 @@
   }
 
   .reset-password{
-   font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 85%;
     margin-top: 3%;
     color: #0D450C;
@@ -85,4 +85,5 @@
 
 .title-entrar{
     color: #0D450C;
+    
 }

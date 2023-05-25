@@ -1,0 +1,50 @@
+
+.btn-delete{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    padding: 6px 10px;
+    border: 2px solid #000000;
+    background-color: transparent;
+    border-radius: 5px;
+    display: flex;
+    background-color: #f21919;
+    font-weight: bold;
+    margin-left: 20%;
+  }
+
+  .btn-edit{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    padding: 6px 10px;  
+    border: 2px solid #000000;
+    background-color: transparent;
+    border-radius: 5px;
+    display: flex;
+    background-color: #f0e924;
+    font-weight: bold;
+    margin-left: 10%;
+  }
+
+  .add-button{
+    width: 100%;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    border:0;
+    border-radius: 4px;
+    background-color: #0D450C;
+    color: #FFF;
+    margin-top: 1%;
+    padding: 8px 20px;  
+    cursor: pointer;
+  }
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  th {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .BsFillPersonPlusFill{
+    margin-right: 5%;
+  }
