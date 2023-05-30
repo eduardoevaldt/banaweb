@@ -8,6 +8,7 @@ import ResetPassword from '../pages/ResetPassword'
 import ListCollaborators from '../pages/ListCollaborators';
 import CreateCollaborators from '../pages/CreateCollaborators';
 import New from '../pages/New';
+import CreateMachines from '../pages/CreateMachines';
 
 import Private from './Private'
 
@@ -42,7 +43,13 @@ function RoutesApp(){
           <New/> 
         </Private>
       } />
-    </Routes>
+        <Route path="/machines" element={ 
+        <Private>
+          <CreateMachines/> 
+        </Private>
+      } />
+
+    </Routes>    
   )
 }
 

@@ -20,7 +20,7 @@ export default function Dashboard() {
       <Header/>
 
       <div className="content">
-        <Title name="Tarefas">
+        <Title name="Serviços">
           <BsFillCalendar2PlusFill size={22} />
         </Title>
 
@@ -34,7 +34,8 @@ export default function Dashboard() {
             <thead>
               <tr>
                 <th scope="col">Funcionário </th>
-                <th scope="col">Serviço</th>
+                <th scope="col">Setor</th>
+                <th scope="col">Área</th>
                 <th scope="col">Andamento</th>
                 <th scope="col">Data</th>
                 <th scope="col">#</th>
@@ -42,8 +43,9 @@ export default function Dashboard() {
             </thead>
             <tbody>
               <tr>
-                <td data-label="Cliente">Mercado Esquina</td>
-                <td data-label="Assunto">Suporte</td>
+                <td data-label="Cliente">Carlos Alexandre</td>
+                <td data-label="Serviço">Corte</td>
+                <td data-label="Area">Sítio Grande</td>
                 <td data-label="Status">
                   <span className="badge" style={{ backgroundColor: '#999' }}>
                     Em aberto
@@ -63,6 +65,7 @@ export default function Dashboard() {
               <tr>
                 <td data-label="Cliente">Informatica TECH</td>
                 <td data-label="Assunto">Suporte</td>
+                <td data-label="Area">Sítio Grande</td>
                 <td data-label="Status">
                   <span className="badge" style={{ backgroundColor: '#999' }}>
                     Concluído

@@ -2,14 +2,16 @@ import { useState, useEffect, useContext } from "react";
 import Header from "../../components/Header";
 import Title from "../../components/Title";
 import { BsPlusCircle } from "react-icons/bs";
+import { toast } from "react-toastify";
 
 import { AuthContext } from "../../contexts/auth";
 import { db } from "../../services/firebaseConnection";
-import { collection, getDocs, getDoc, doc } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, addDoc } from "firebase/firestore";
 
 import "./new.css";
 
-const listRef = collection(db, "collaborators");
+const listRefC = collection(db, "collaborators");
+const listRefM = collection(db, "machines");
 
 export default function New() {
   const { user } = useContext(AuthContext);
@@ -18,20 +20,24 @@ export default function New() {
   const [loadCollaborator, setLoadCollaborator] = useState(true);
   const [collaboratorSelected, setCollaboratorSelected] = useState(0)
 
+  const [machines, setMachines] = useState([]);
+  const [loadMachines, setLoadMachines] = useState(true);
+  const [machineSelected, setMachineSelected] = useState(0)
 
   const [descricao, setDescricao] = useState("");
-  const [servico, setServico] = useState("Corte");
+  const [setor, setSetor] = useState("Corte");
   const [area, setArea] = useState("Sitio");
   const [andamento, setAndamento] = useState("Aberto");
 
   useEffect(() => {
+
     async function loadCollaborators() {
-      const querySnapshot = await getDocs(listRef)
+      const querySnapshot = await getDocs(listRefC)
         .then((snapshot) => {
-          let lista = [];
+          let listaC = [];
 
           snapshot.forEach((doc) => {
-            lista.push({
+            listaC.push({
               id: doc.id,
               nome: doc.data().nome,
             });
@@ -44,25 +50,56 @@ export default function New() {
             return;
           }
 
-          setCollaborators(lista);
+          setCollaborators(listaC);
           setLoadCollaborator(false);
         })
         .catch((error) => {
-          console.log("ERRRO AO BUSCAR OS FUNCIONÁRIOS", error);
+          console.log("ERRO AO BUSCAR OS FUNCIONÁRIOS", error);
           setLoadCollaborator(false);
           setCollaborators([{ id: "1", nome: "FULANO" }]);
         });
     }
 
+    async function loadMachines() {
+      const querySnapshot = await getDocs(listRefM)
+        .then((snapshot) => {
+          let listaM = [];
+
+          snapshot.forEach((doc) => {
+            listaM.push({
+              id: doc.id,
+              nome: doc.data().nome,
+            });
+          });
+
+          if (snapshot.docs.size === 0) {
+            console.log("NENHUMA MÁQUINA ENCONTRADA");
+            setMachines([{ id: "1", nome: "SEM MÁQUINA ADICIONADA" }]);
+            setLoadMachines(false);
+            return;
+          }
+
+          setMachines(listaM);
+          setLoadMachines(false);
+        })
+        .catch((error) => {
+          console.log("ERRO AO BUSCAR MAQUINÁRIO", error);
+          setLoadMachines(false);
+          setMachines([{ id: "1", nome: "SEM MÁQUINA ADICIONADA" }]);
+        });
+    }
+
     loadCollaborators();
+    loadMachines();
+
   }, []);
 
   function handleOptionChange(e) {
     setAndamento(e.target.value);
   }
 
-  function handleChangeSelectServico(e) {
-    setServico(e.target.value);
+  function handleChangeSelectSetor(e) {
+    setSetor(e.target.value);
   }
   
   function handleChangeSelectArea(e){
@@ -71,7 +108,38 @@ export default function New() {
 
   function handleChangeCollaborator(e){
     setCollaboratorSelected(e.target.value)
-    console.log(collaborators[e.target.value].nome);
+  }
+
+  function handleChangeMachine(e){
+    setMachineSelected(e.target.value)
+  }
+
+  async function handleRegister(e){
+    e.preventDefault();
+
+    //Registrar um serviço
+    await addDoc(collection(db, "services"),{
+      created: new Date(),
+      collaborator: collaborators[collaboratorSelected].nome,
+      collaboratorId: collaborators[collaboratorSelected].id,
+      machines: machines[machineSelected].nome,
+      machineId: machines[machineSelected].id,
+      setor: setor,
+      area: area,
+      andamento: andamento,
+      descricao: descricao,
+      userId: user.uid
+    })
+    .then(() => {
+      toast.success("Serviço registrado!")
+      setDescricao('')
+      setCollaboratorSelected(0)
+      setMachineSelected(0)
+    })
+    .catch((error) => {
+      toast.error("Erro ao registrar, tente mais tarde!")
+      console.log(error);
+    })
   }
 
   return (
@@ -79,12 +147,12 @@ export default function New() {
       <Header />
 
       <div className="content">
-        <Title name="Nova Tarefa">
+        <Title name="Novo Serviço">
           <BsPlusCircle size={25} />
         </Title>
 
         <div className="container">
-          <form className="form-profile">
+          <form className="form-profile" onSubmit={handleRegister}>
             <span>
               <strong>Funcionários</strong>
             </span>
@@ -105,9 +173,28 @@ export default function New() {
             }
 
             <span>
-              <strong>Serviço</strong>
+              <strong>Maquinaria</strong>
             </span>
-            <select value={servico} onChange={handleChangeSelectServico}>
+            {
+              loadMachines ? (
+                <input type="text" disabled={true} value="Carregando..." />
+              ) : (
+                <select value={machineSelected} onChange={handleChangeMachine}>
+                  {machines.map((item, index) => {
+                    return(
+                      <option key={index} value={index}>
+                        {item.nome}
+                      </option>
+                    )
+                  })}
+                </select>
+              )
+            }
+
+            <span>
+              <strong>Setor</strong>
+            </span>
+            <select value={setor} onChange={handleChangeSelectSetor}>
               <option value="Corte">Corte</option>
               <option value="Adubação">Adubação</option>
               <option value="Ensacação">Ensacação</option>
@@ -119,7 +206,13 @@ export default function New() {
               <strong>Área</strong>
             </span>
             <select value={area} onChange={handleChangeSelectArea}>
-              <option value="Sitio">Sítio</option>
+              <option value="Sitio">Sítio Grande - Taquara</option>
+              <option value="Sitio">Sítio Grande - Pé de Louro</option>
+              <option value="Sitio">Sítio Grande - Transgênicas</option>
+              <option value="Sitio">Sítio Grande - Triangão</option>
+              <option value="Sitio">Sítio Grande - Trianguinho</option>
+              <option value="Sitio">Sítio Grande - Galpão</option>
+              <option value="Sitio">Sítio Grande - Perau</option>
               <option value="Seu Pedro">Seu Pedro</option>
               <option value="Veronica">Verônica</option>
               <option value="Sanga Funda">Sanga Funda</option>
