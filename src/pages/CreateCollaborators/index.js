@@ -7,11 +7,11 @@ import { toast } from 'react-toastify'
 import { db } from '../../services/firebaseConnection'
 import { addDoc, collection } from 'firebase/firestore'
 
-//import {AuthContext} from '../../contexts/auth'
+import {AuthContext} from '../../contexts/auth'
 
 export default function CreateCollaborators(){
 
-  //const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const [nome, setNome] = useState('')
   const [cpf, setCpf] = useState('')
@@ -34,7 +34,7 @@ export default function CreateCollaborators(){
           cbo: cbo,
           telefone: telefone,
           endereco: endereco,
-          //userId: user.uid
+          userId: user?.uid
         })
         .then(() => {
           setNome('')

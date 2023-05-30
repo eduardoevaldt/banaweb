@@ -1,23 +1,112 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/auth";
 
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import { BsFillCalendar2PlusFill, BsPlus, BsSearch, BsFillPencilFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
-
 import "./dashboard.css";
+import {
+  BsFillCalendar2PlusFill,
+  BsPlus,
+  BsSearch,
+  BsFillPencilFill,
+  BsFillGearFill,
+  BsTrash3Fill
+} from "react-icons/bs";
+
+import {
+  collection,
+  getDocs,
+  orderBy,
+  limit,
+  startAfter,
+  query,
+  where
+} from "firebase/firestore";
+import { db } from "../../services/firebaseConnection";
+import { format } from "date-fns"
+
+const listRef = collection(db, "services");
 
 export default function Dashboard() {
-  const { logout } = useContext(AuthContext);
 
-  async function handleLogout() {
-    await logout();
+  const [user, setUser] = useState({});
+
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isEmpty, setIsEmpty] = useState(false);
+
+  useEffect(() => {
+    async function loadServices() {
+
+      const userDetail = localStorage.getItem("@banawebPRO")
+      setUser(JSON.parse(userDetail))
+
+      if(userDetail){
+        const data = JSON.parse(userDetail);
+
+        const q = query(listRef, orderBy("created", "desc"), limit(5), where("userId", "==", data?.uid));
+
+        const querySnapshot = await getDocs(q);
+        await updateState(querySnapshot);
+  
+        setLoading(false);
+      }
+    }
+
+    loadServices();
+
+    return () => {};
+  }, []);
+
+  async function updateState(querySnapshot) {
+    const isCollectionEmpty = querySnapshot.size === 0;
+
+    if (!isCollectionEmpty) {
+      let lista = [];
+
+      querySnapshot.forEach((doc) => {
+        lista.push({
+          id: doc.id,
+          collaborator: doc.data().collaborator,
+          collaboratorId: doc.data().collaboratorId,
+          machine: doc.data().machine,
+          machineId: doc.data().machineId,
+          setor: doc.data().setor,
+          created: doc.data().created,
+          createdFormat: format(doc.data().created.toDate(), 'dd/MM/yyyy'),
+          area: doc.data().area,
+          andamento: doc.data().andamento,
+          descricao: doc.data().descricao
+        });
+      });
+
+      setServices((services) => [...services, ...lista]);
+    } else {
+      setIsEmpty(true);
+    }
   }
 
-  return(
+  if(loading){
+    return(
+      <div>
+        <Header/>
+        <div className="content">
+          <Title name="Serviços">
+            <BsFillCalendar2PlusFill size={22} />
+          </Title>
+
+          <div className="container dashboard">
+            <span>Buscando serviços...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
     <div>
-      <Header/>
+      <Header />
 
       <div className="content">
         <Title name="Serviços">
@@ -25,68 +114,72 @@ export default function Dashboard() {
         </Title>
 
         <>
-          <Link to="/new" className="new">
-            <BsPlus color="#FFF" size={25} />
-            Adicionar
-          </Link>  
-
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">Funcionário </th>
-                <th scope="col">Setor</th>
-                <th scope="col">Área</th>
-                <th scope="col">Andamento</th>
-                <th scope="col">Data</th>
-                <th scope="col">#</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td data-label="Cliente">Carlos Alexandre</td>
-                <td data-label="Serviço">Corte</td>
-                <td data-label="Area">Sítio Grande</td>
-                <td data-label="Status">
-                  <span className="badge" style={{ backgroundColor: '#999' }}>
-                    Em aberto
-                  </span>
-                </td>
-                <td data-label="Cadastrado">12/05/2023</td>
-                <td data-label="#">
-                  <button className="action" style={{ backgroundColor: '#3583f6' }}>
-                    <BsSearch color='#FFF' size={17}/>
-                  </button>
-                  <button className="action" style={{ backgroundColor: '#f6a935' }}>
-                    <BsFillPencilFill color='#FFF' size={17}/>
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <td data-label="Cliente">Informatica TECH</td>
-                <td data-label="Assunto">Suporte</td>
-                <td data-label="Area">Sítio Grande</td>
-                <td data-label="Status">
-                  <span className="badge" style={{ backgroundColor: '#999' }}>
-                    Concluído
-                  </span>
-                </td>
-                <td data-label="Cadastrado">12/05/2023</td>
-                <td data-label="#">
-                  <button className="action" style={{ backgroundColor: '#3583f6' }}>
-                    <BsSearch color='#FFF' size={17}/>
-                  </button>
-                  <button className="action" style={{ backgroundColor: '#f6a935' }}>
-                    <BsFillPencilFill color='#FFF' size={17}/>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          {services.length === 0 ? (
+            <div className="container dashboard">
+              <span>Nenhum serviço encontrado...</span>
+              <Link to="/new" className="new">
+                <BsPlus color="#FFF" size={25} />
+                Adicionar
+              </Link>
+            </div>
+          ) : (
+            <>
+              <Link to="/new" className="new">
+                <BsPlus color="#FFF" size={25} />
+                Adicionar
+              </Link>
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Funcionário</th>
+                    <th scope="col">Maquinaria</th>
+                    <th scope="col">Setor</th>
+                    <th scope="col">Área</th>
+                    <th scope="col">Andamento</th>
+                    <th scope="col">Data</th>
+                    <th scope="col"><BsFillGearFill size={15} /></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {services.map((item, index) => {
+                    return (
+                      <tr key={index}>
+                        <td data-label="Collaborator">{item.collaborator}</td>
+                        <td data-label="Machines">{item.machine}</td>
+                        <td data-label="Setor">{item.setor}</td>
+                        <td data-label="Area">{item.area}</td>
+                        <td data-label="Andamento">
+                          <span
+                            className="badge"
+                            style={{ backgroundColor: "#999" }}
+                          >
+                            {item.andamento}
+                          </span>
+                        </td>
+                        <td data-label="Cadastrado">{item.createdFormat}</td>
+                        <td data-label="#">
+                          <button
+                            className="action"
+                            style={{ backgroundColor: "#4db8ff" }}
+                          >
+                            <BsSearch color="#FFF" size={17} />
+                          </button>
+                          <button
+                            className="action"
+                            style={{ backgroundColor: "#e6e600" }}
+                          >
+                            <BsFillPencilFill color="#FFF" size={17} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </>
+          )}
         </>
-
       </div>
-    
     </div>
-  )
+  );
 }

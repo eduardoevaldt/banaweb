@@ -7,10 +7,10 @@ import { toast } from "react-toastify";
 import { db } from "../../services/firebaseConnection";
 import { addDoc, collection } from "firebase/firestore";
 
-//import {AuthContext} from '../../contexts/auth'
+import {AuthContext} from '../../contexts/auth'
 
 export default function CreateMachines() {
-  //const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   
   const [categoria, setCategoria] = useState("Veiculo");
   const [nome, setNome] = useState("");
@@ -32,7 +32,7 @@ export default function CreateMachines() {
         nome: nome,
         marca: marca,
         descricao: descricao,
-        //userId: user.uid
+        userId: user?.uid
       })
         .then(() => {
           setCategoria("");

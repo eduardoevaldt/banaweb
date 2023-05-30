@@ -26,7 +26,7 @@ export default function New() {
 
   const [descricao, setDescricao] = useState("");
   const [setor, setSetor] = useState("Corte");
-  const [area, setArea] = useState("Sitio");
+  const [area, setArea] = useState("Sitio Grande");
   const [andamento, setAndamento] = useState("Aberto");
 
   useEffect(() => {
@@ -122,13 +122,13 @@ export default function New() {
       created: new Date(),
       collaborator: collaborators[collaboratorSelected].nome,
       collaboratorId: collaborators[collaboratorSelected].id,
-      machines: machines[machineSelected].nome,
+      machine: machines[machineSelected].nome,
       machineId: machines[machineSelected].id,
       setor: setor,
       area: area,
       andamento: andamento,
       descricao: descricao,
-      userId: user.uid
+      userId: user?.uid
     })
     .then(() => {
       toast.success("Serviço registrado!")
