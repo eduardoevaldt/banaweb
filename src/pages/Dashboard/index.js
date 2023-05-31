@@ -1,17 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../contexts/auth";
 
 import Header from "../../components/Header";
 import Title from "../../components/Title";
 import { Link } from "react-router-dom";
 import "./dashboard.css";
 import {
-  BsFillCalendar2PlusFill,
-  BsPlus,
+  BsCardText,
   BsSearch,
   BsFillPencilFill,
   BsFillGearFill,
-  BsTrash3Fill
 } from "react-icons/bs";
 
 import {
@@ -26,6 +23,7 @@ import {
 import { db } from "../../services/firebaseConnection";
 import { format } from "date-fns"
 
+
 const listRef = collection(db, "services");
 
 export default function Dashboard() {
@@ -34,7 +32,10 @@ export default function Dashboard() {
 
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [isEmpty, setIsEmpty] = useState(false);
+  const [lastDocs, setLastDocs] = useState();
+  const [loadindMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     async function loadServices() {
@@ -81,10 +82,34 @@ export default function Dashboard() {
         });
       });
 
+      const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]; //Pegando o ultimo item da lista
+      
       setServices((services) => [...services, ...lista]);
+      setLastDocs(lastDoc);
+
     } else {
       setIsEmpty(true);
     }
+
+    setLoadingMore(false);
+
+  }
+
+  async function handleMore(){
+    setLoadingMore(true);
+
+    const userDetail = localStorage.getItem("@banawebPRO")
+    setUser(JSON.parse(userDetail))
+
+    if(userDetail){
+      const data = JSON.parse(userDetail);
+
+      const q = query(listRef, orderBy("created", "desc"), startAfter(lastDocs), limit(5), where("userId", "==", data?.uid));
+      const querySnapshot = await getDocs(q);
+      await updateState(querySnapshot);
+     
+    }    
+
   }
 
   if(loading){
@@ -93,7 +118,7 @@ export default function Dashboard() {
         <Header/>
         <div className="content">
           <Title name="Serviços">
-            <BsFillCalendar2PlusFill size={22} />
+            <BsCardText size={24} />
           </Title>
 
           <div className="container dashboard">
@@ -110,7 +135,7 @@ export default function Dashboard() {
 
       <div className="content">
         <Title name="Serviços">
-          <BsFillCalendar2PlusFill size={22} />
+          <BsCardText size={24} />
         </Title>
 
         <>
@@ -118,15 +143,13 @@ export default function Dashboard() {
             <div className="container dashboard">
               <span>Nenhum serviço encontrado...</span>
               <Link to="/new" className="new">
-                <BsPlus color="#FFF" size={25} />
-                Adicionar
+                + Adicionar
               </Link>
             </div>
           ) : (
             <>
               <Link to="/new" className="new">
-                <BsPlus color="#FFF" size={25} />
-                Adicionar
+                + Adicionar
               </Link>
               <table>
                 <thead>
@@ -151,7 +174,7 @@ export default function Dashboard() {
                         <td data-label="Andamento">
                           <span
                             className="badge"
-                            style={{ backgroundColor: "#999" }}
+                            style={{ backgroundColor: item.andamento === 'Em andamento' ? '#999' : '#5cb85c' }}
                           >
                             {item.andamento}
                           </span>
@@ -164,18 +187,22 @@ export default function Dashboard() {
                           >
                             <BsSearch color="#FFF" size={17} />
                           </button>
-                          <button
+                          <Link
+                            to={`/new/${item.id}`}
                             className="action"
                             style={{ backgroundColor: "#e6e600" }}
                           >
                             <BsFillPencilFill color="#FFF" size={17} />
-                          </button>
+                          </Link>
                         </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
+
+              { loadindMore && <h4 className="text-more">Buscando mais serviços...</h4>}
+              {!loadindMore && !isEmpty && <button className="btn-more" onClick={handleMore}>Buscar +</button>}
             </>
           )}
         </>

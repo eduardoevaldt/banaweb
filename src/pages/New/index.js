@@ -1,12 +1,14 @@
 import { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
+
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import { BsPlusCircle } from "react-icons/bs";
+import { BsFillCalendar2PlusFill,BsFillPencilFill } from "react-icons/bs";
 import { toast } from "react-toastify";
 
 import { AuthContext } from "../../contexts/auth";
 import { db } from "../../services/firebaseConnection";
-import { collection, getDocs, getDoc, doc, addDoc } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, addDoc, updateDoc } from "firebase/firestore";
 
 import "./new.css";
 
@@ -15,6 +17,8 @@ const listRefM = collection(db, "machines");
 
 export default function New() {
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const [collaborators, setCollaborators] = useState([]);
   const [loadCollaborator, setLoadCollaborator] = useState(true);
@@ -27,7 +31,9 @@ export default function New() {
   const [descricao, setDescricao] = useState("");
   const [setor, setSetor] = useState("Corte");
   const [area, setArea] = useState("Sitio Grande");
-  const [andamento, setAndamento] = useState("Aberto");
+  const [andamento, setAndamento] = useState("Em andamento");
+  const [idCollaborator, setIdCollaborator] = useState(false);
+  const [idMachine, setIdMachine] = useState(false);
 
   useEffect(() => {
 
@@ -52,6 +58,11 @@ export default function New() {
 
           setCollaborators(listaC);
           setLoadCollaborator(false);
+
+          if(id){
+            loadIdCollaborators(listaC);
+          }
+
         })
         .catch((error) => {
           console.log("ERRO AO BUSCAR OS FUNCIONÁRIOS", error);
@@ -81,6 +92,11 @@ export default function New() {
 
           setMachines(listaM);
           setLoadMachines(false);
+
+          if(id){
+            loadIdMachines(listaM);
+          }
+
         })
         .catch((error) => {
           console.log("ERRO AO BUSCAR MAQUINÁRIO", error);
@@ -92,7 +108,45 @@ export default function New() {
     loadCollaborators();
     loadMachines();
 
-  }, []);
+  }, [id]);
+
+  async function loadIdCollaborators(listaC){
+    const docRef = doc(db, "services", id);
+    await getDoc(docRef)
+    .then((snapshot) => {
+      setSetor(snapshot.data().setor);
+      setArea(snapshot.data().area);
+      setAndamento(snapshot.data().andamento);
+      setDescricao(snapshot.data().descricao);
+
+      let index = listaC.findIndex(item => item.id === snapshot.data().collaboratorId)
+      setCollaboratorSelected(index);
+      setIdCollaborator(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setIdCollaborator(false);
+    })
+  }
+
+  async function loadIdMachines(listaM){
+    const docRef = doc(db, "services", id);
+    await getDoc(docRef)
+    .then((snapshot) => {
+      setSetor(snapshot.data().setor);
+      setArea(snapshot.data().area);
+      setAndamento(snapshot.data().andamento);
+      setDescricao(snapshot.data().descricao);
+
+      let index = listaM.findIndex(item => item.id === snapshot.data().machineId)
+      setMachineSelected(index);
+      setIdMachine(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setIdMachine(false);
+    })
+  }
 
   function handleOptionChange(e) {
     setAndamento(e.target.value);
@@ -116,6 +170,34 @@ export default function New() {
 
   async function handleRegister(e){
     e.preventDefault();
+
+    if(idCollaborator && idMachine){
+      //Atualizando serviço
+      const docRef = doc(db, "services", id)
+      await updateDoc(docRef, {
+        collaborator: collaborators[collaboratorSelected].nome,
+        collaboratorId: collaborators[collaboratorSelected].id,
+        machine: machines[machineSelected].nome,
+        machineId: machines[machineSelected].id,
+        setor: setor,
+        area: area,
+        andamento: andamento,
+        descricao: descricao,
+        userId: user?.uid
+      })
+      .then(() => {
+        toast.info("Serviço atualizado com sucesso!");
+        setCollaboratorSelected(0);
+        setDescricao('');
+        navigate('/dashboard');
+      })
+      .catch((error) => {
+        toast.error("Ops, erro ao atualizar esse serviço!");
+        console.log(error);
+      })
+     
+      return;
+    }
 
     //Registrar um serviço
     await addDoc(collection(db, "services"),{
@@ -147,8 +229,8 @@ export default function New() {
       <Header />
 
       <div className="content">
-        <Title name="Novo Serviço">
-          <BsPlusCircle size={25} />
+        <Title name={id ? "Editando serviço" : "Novo Serviço"}>
+          { id ?  <BsFillPencilFill size={22} /> : <BsFillCalendar2PlusFill size={22} />}
         </Title>
 
         <div className="container">
@@ -198,24 +280,97 @@ export default function New() {
               <option value="Corte">Corte</option>
               <option value="Adubação">Adubação</option>
               <option value="Ensacação">Ensacação</option>
-              <option value="Pulverização">Pulverização</option>
-              <option value="Serviços Gerais">Serviços Gerais</option>
+              <option value="Pulverização do Fruto">Pulverização do Fruto</option>
+              <option value="Pulverização Folhar">Pulverização Folhar</option>
+              <option value="Pulverização do Solo">Pulverização do Solo</option>
+              <option value="Cultivo">Cultivo</option>
+              <option value="Manutenção de Maquinário">Manutenção de Maquinário</option>
             </select>
 
             <span>
               <strong>Área</strong>
             </span>
             <select value={area} onChange={handleChangeSelectArea}>
-              <option value="Sitio">Sítio Grande - Taquara</option>
-              <option value="Sitio">Sítio Grande - Pé de Louro</option>
-              <option value="Sitio">Sítio Grande - Transgênicas</option>
-              <option value="Sitio">Sítio Grande - Triangão</option>
-              <option value="Sitio">Sítio Grande - Trianguinho</option>
-              <option value="Sitio">Sítio Grande - Galpão</option>
-              <option value="Sitio">Sítio Grande - Perau</option>
-              <option value="Seu Pedro">Seu Pedro</option>
-              <option value="Veronica">Verônica</option>
-              <option value="Sanga Funda">Sanga Funda</option>
+              <option 
+              value="Sítio Grande">Sítio Grande (50ha)</option>
+              <option 
+              value="Verônica">Verônica (20ha)</option>
+              <option 
+              value="Seu Pedro">Seu Pedro (13ha)</option>
+              <option 
+              value="Sanga Funda">Sanga Funda (37ha)</option>
+              <option 
+              value="Sítio Grande - Quadro do Galpão">Sítio Grande - Quadro do Galpão</option>
+              <option 
+              value="Sítio Grande - Segundo Quadro">Sítio Grande - Segundo Quadro</option>
+              <option 
+              value="Sítio Grande - Terceiro Quadro">Sítio Grande - Terceiro Quadro</option>
+              <option 
+              value="Sítio Grande - Quadro do Coqueiro">Sítio Grande - Quadro do Coqueiro</option>
+              <option 
+              value="VerSítio Grande - Quadro do Mamãoonica">Sítio Grande - Quadro do Mamão</option>
+              <option 
+              value="Sítio Grande - Quadro do Trianguinho">Sítio Grande - Quadro do Trianguinho</option>
+              <option 
+              value="Sítio Grande - Quadro do Triangão">Sítio Grande - Quadro do Triangão</option>
+              <option 
+              value="Sítio Grande - Extrema Verônica">Sítio Grande - Extrema Verônica</option>
+              <option 
+              value="Sítio Grande - Quadro do Perau">Sítio Grande - Quadro do Perau</option>
+              <option 
+              value="Sítio Grande - Quadro da Goaiba">Sítio Grande - Quadro da Goaiba</option>
+              <option 
+              value="Sítio Grande - Quadro da Pedra">Sítio Grande - Quadro da Pedra</option>
+              <option 
+              value="Sítio Grande - Quadro da Taquara">Sítio Grande - Quadro da Taquara</option>
+              <option 
+              value="Sítio Grande - Quadro do Pé de Louro">Sítio Grande - Quadro do Pé de Louro</option>
+              <option 
+              value="Sítio Grande - Quadro das Altonas">Sítio Grande - Quadro das Altonas</option>
+              <option 
+              value="Sítio Grande - Quadro do Lagarto">Sítio Grande - Quadro do Lagarto</option>
+              <option 
+              value="Sítio Grande - Quadro da Estrada Geral">Sítio Grande - Quadro da Estrada Geral</option>
+              <option 
+              value="Sítio Grande - Batista Quadro do Perau">Sítio Grande - Batista Quadro do Perau</option>
+              <option 
+              value="Sítio Grande - Batista Quadro Transgênicas">Sítio Grande - Batista Quadro Transgênicas</option>
+              <option 
+              value="Verônica - Quadro Transgênicas">Verônica - Quadro Transgênicas</option>
+              <option 
+              value="Verônica - Quadro da Extrema Zé Rocha">Verônica - Quadro da Extrema Zé Rocha</option>
+              <option 
+              value="Verônica - Quadro da Ladeira">Verônica - Quadro da Ladeira</option>
+              <option 
+              value="Verônica - Quadro Extrema do Sítio">Verônica - Quadro Extrema do Sítio</option>
+              <option 
+              value="Verônica - Quadro do Perau">Verônica - Quadro do Perau</option>
+              <option 
+              value="Seu Pedro - Quadro Transgênicas Grotão">Seu Pedro - Quadro Transgênicas Grotão</option>
+              <option 
+              value="Seu Pedro - Quadro Transgênicas">Seu Pedro - Quadro Transgênicas</option>
+              <option 
+              value="Seu Pedro - Quadro do Perau">Seu Pedro - Quadro do Perau</option>
+               <option 
+              value="Sanga Funda - Quadro do Lucas">Sanga Funda - Quadro do Lucas</option>
+              <option 
+              value="Sanga Funda - Quadro do Nego">Sanga Funda - Quadro do Nego</option>
+              <option 
+              value="Sanga Funda - Quadro das Transgênicas">Sanga Funda - Quadro das Transgênicas</option>
+              <option 
+              value="Sanga Funda - Quadro da Ladeira">Sanga Funda - Quadro da Ladeira</option>
+              <option 
+              value="Sanga Funda - Quadro da Cana">Sanga Funda - Quadro da Cana</option>
+              <option 
+              value="Sanga Funda - Quadro da Ladeirinha">Sanga Funda - Quadro da Ladeirinha</option>
+              <option 
+              value="Sanga Funda - Quadro do Rancho/Esquerda">Sanga Funda - Quadro do Rancho/Esquerda</option>
+              <option 
+              value="Sanga Funda - Quadro do Rancho/Direita">Sanga Funda - Quadro do Rancho/Direita</option>
+              <option 
+              value="Sanga Funda - Quadro do Perau">Sanga Funda - Quadro do Perau</option>
+                 <option 
+              value="Sanga Funda - Quadro do Cláudio">Sanga Funda - Quadro do Cláudio</option>
             </select>
 
             <span>
@@ -225,20 +380,11 @@ export default function New() {
               <input
                 type="radio"
                 name="radio"
-                value="Aberto"
+                value="Em andamento"
                 onChange={handleOptionChange}
-                checked={andamento === "Aberto"}
+                checked={andamento === "Em andamento"}
               />
-              <span>Aberto</span>
-
-              <input
-                type="radio"
-                name="radio"
-                value="Progresso"
-                onChange={handleOptionChange}
-                checked={andamento === "Progresso"}
-              />
-              <span>Progresso</span>
+              <span>Em andamento</span>
 
               <input
                 type="radio"
@@ -248,6 +394,7 @@ export default function New() {
                 checked={andamento === "Terminado"}
               />
               <span>Terminado</span>
+              
             </div>
 
             <span>

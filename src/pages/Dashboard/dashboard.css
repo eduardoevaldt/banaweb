@@ -86,6 +86,21 @@ table td .badge{
   font-weight: 600;
 }
 
+.btn-more{
+  margin: 1.5em 0;
+  padding: 0.5em 1em;
+  background-color: #0D450C;
+  border: 0;
+  border-radius: 5px;
+  font-size: 1.0em;
+  color: #FFF;
+}
+
+.text-more{
+  margin-top: 1%;
+  padding: 0.1em;
+}
+
 @media screen and (max-width: 1140px){
     table{
       border:0;

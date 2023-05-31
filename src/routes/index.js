@@ -43,6 +43,11 @@ function RoutesApp(){
           <New/> 
         </Private>
       } />
+      <Route path="/new/:id" element={ 
+        <Private>
+          <New/> 
+        </Private>
+      } />
         <Route path="/machines" element={ 
         <Private>
           <CreateMachines/> 

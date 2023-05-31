@@ -3,7 +3,7 @@ import avatarImg from '../../assets/avatar.png'
 import { Link } from 'react-router-dom'
 
 import { AuthContext } from '../../contexts/auth'
-import { BsFillCalendar2PlusFill, BsPeopleFill, BsPersonCircle,BsPersonLinesFill, BsHammer } from 'react-icons/bs'
+import { BsCardText, BsPeopleFill, BsPersonCircle,BsPersonLinesFill, BsHammer } from 'react-icons/bs'
 import './header.css';
 
 export default function Header(){
@@ -16,7 +16,7 @@ export default function Header(){
       </div>
 
       <Link to="/dashboard">
-        <BsFillCalendar2PlusFill color="#FFF" size={20} />
+        <BsCardText color="#FFF" size={20} />
         Serviços
       </Link>
 

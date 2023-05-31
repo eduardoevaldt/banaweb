@@ -72,6 +72,8 @@ export default function ListCollaborators() {
           id: doc.id,
           nome: doc.data().nome,
           cpf: doc.data().cpf,
+          empresa: doc.data().empresa,
+          cnpjEmpresa: doc.data().cnpjEmpresa,
           funcao: doc.data().funcao,
           cbo: doc.data().cbo,
           telefone: doc.data().telefone,
@@ -131,6 +133,7 @@ export default function ListCollaborators() {
                   <tr>
                     <th scope="col">Nome</th>
                     <th scope="col">CPF</th>
+                    <th scope="col">Empresa</th>
                     <th scope="col">CBO</th>
                     <th scope="col">Função</th>
                     <th scope="col">Endereço</th>
@@ -146,6 +149,7 @@ export default function ListCollaborators() {
                       <tr key={index}>
                         <td data-label="Nome">{item.nome}</td>
                         <td data-label="CPF">{item.cpf}</td>
+                        <td data-label="Empresa">{item.empresa}</td>
                         <td data-label="CBO">{item.cbo}</td>
                         <td data-label="Função">{item.funcao}</td>
                         <td data-label="Endereco">{item.endereco}</td>
