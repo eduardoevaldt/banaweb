@@ -1,16 +1,26 @@
 import { useContext, useState, useEffect } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
+
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import { BsPlusCircle } from "react-icons/bs";
+import { BsFillPencilFill, BsPlusCircle } from "react-icons/bs";
 import { toast } from "react-toastify";
 
 import { db } from "../../services/firebaseConnection";
-import { addDoc, collection } from "firebase/firestore";
+import { collection, getDocs, getDoc, doc, addDoc, updateDoc } from "firebase/firestore";
 
 import { AuthContext } from "../../contexts/auth";
 
+const listRef = collection(db, "collaborators");
+
 export default function CreateCollaborators() {
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [collaborators, setCollaborators] = useState([]);
+  const [loadCollaborator, setLoadCollaborator] = useState(true);
+  const [collaboratorSelected, setCollaboratorSelected] = useState(0)
 
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
@@ -20,10 +30,111 @@ export default function CreateCollaborators() {
   const [cbo, setCbo] = useState("");
   const [telefone, setTelefone] = useState("");
   const [endereco, setEndereco] = useState("");
+  const [idCollaborator, setIdCollaborator] = useState(false);
+
+
+  useEffect(() => {
+
+    async function loadCollaborators() {
+      const querySnapshot = await getDocs(listRef)
+        .then((snapshot) => {
+          let lista = [];
+
+          snapshot.forEach((doc) => {
+            lista.push({
+              id: doc.id,
+              nome: doc.data().nome,
+              cpf: doc.data().cpf,
+              empresa: doc.data().empresa,
+              cnpjEmpresa: doc.data().cnpjEmpresa,
+              funcao: doc.data().funcao,
+              cbo: doc.data().cbo,
+              telefone: doc.data().telefone,
+              endereco: doc.data().endereco,
+            });
+          });
+
+          if (snapshot.docs.size === 0) {
+            console.log("NENHUM FUNCIONÁRIO ENCONTRADO");
+            setCollaborators([{ id: "1", nome: "FULANO" }]);
+            setLoadCollaborator(false);
+            return;
+          }
+
+          setCollaborators(lista);
+          setLoadCollaborator(false);
+
+          if(id){
+            loadIdCollaborators(lista);
+          }
+
+        })
+        .catch((error) => {
+          console.log("ERRO AO BUSCAR OS FUNCIONÁRIOS", error);
+          setLoadCollaborator(false);
+          setCollaborators([{ id: "1", nome: "FULANO" }]);
+        });
+    }
+
+    loadCollaborators();
+
+  }, [id]);
+
+  async function loadIdCollaborators(lista){
+    const docRef = doc(db, "collaborators", id);
+    await getDoc(docRef)
+    .then((snapshot) => {
+      setNome(snapshot.data().nome);
+      setCpf(snapshot.data().cpf);
+      setEmpresa(snapshot.data().empresa);
+      setCnpjEmpresa(snapshot.data().cnpjEmpresa);
+      setFuncao(snapshot.data().funcao);
+      setCbo(snapshot.data().cbo);
+      setTelefone(snapshot.data().telefone);
+      setEndereco(snapshot.data().endereco);
+
+      let index = lista.findIndex(item => item.id === snapshot.data().id)
+      setCollaboratorSelected(index);
+      setIdCollaborator(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setIdCollaborator(false);
+    })
+  }
+
 
   async function handleRegister(e) {
     e.preventDefault();
 
+    if(id){
+      //Atualizando funcionário
+      const docRef = doc(db, "collaborators", id)
+      await updateDoc(docRef, {
+        nome: nome,
+        cpf: cpf,
+        empresa: empresa,
+        cnpjEmpresa: cnpjEmpresa,
+        funcao: funcao,
+        cbo: cbo,
+        telefone: telefone,
+        endereco: endereco,
+        userId: user?.uid,
+      })
+      .then(() => {
+        toast.info("Funcionário atualizado com sucesso!");
+        setCollaboratorSelected(0);
+        navigate('/list-collaborators');
+      })
+      .catch((error) => {
+        toast.error("Ops, erro ao atualizar esse funcionário!");
+        console.log(error);
+      })
+     
+      return;
+    }
+
+    //Cadastrar um funcionário
     if (
       nome !== "" &&
       cpf !== "" &&
@@ -71,8 +182,9 @@ export default function CreateCollaborators() {
       <Header />
 
       <div className="content">
-        <Title name="Cadastrar Funcionário">
-          <BsPlusCircle size={25} />
+
+      <Title name={id ? "Editando funcionário" : "Cadastrar Funcionário"}>
+          { id ?  <BsFillPencilFill size={22} /> : <BsPlusCircle size={24} />}
         </Title>
 
         <div className="container">

@@ -92,7 +92,6 @@ export default function Dashboard() {
     }
 
     setLoadingMore(false);
-
   }
 
   async function handleMore(){
@@ -181,15 +180,15 @@ export default function Dashboard() {
                         </td>
                         <td data-label="Cadastrado">{item.createdFormat}</td>
                         <td data-label="#">
-                          <button
+                          <Link
                             className="action"
                             style={{ backgroundColor: "#4db8ff" }}
                           >
                             <BsSearch color="#FFF" size={17} />
-                          </button>
+                          </Link>
                           <Link
-                            to={`/new/${item.id}`}
                             className="action"
+                            to={`/new/${item.id}`}
                             style={{ backgroundColor: "#e6e600" }}
                           >
                             <BsFillPencilFill color="#FFF" size={17} />

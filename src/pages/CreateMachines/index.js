@@ -69,9 +69,10 @@ export default function CreateMachines() {
               <strong>Categoria</strong>
             </span>
             <select value={categoria} onChange={handleChangeSelectCategoria}>
-              <option value="Veiculo">Veículo</option>
+              <option value="Veículo">Veículo</option>
               <option value="Bomba">Bomba</option>
-              <option value="Maquinario de Engate">Maquinário de Engate</option>
+              <option value="Máquina">Máquina</option>
+              <option value="Maquinário de Engate">Maquinário de Engate Hidráulico</option>
             </select>
 
             <span>

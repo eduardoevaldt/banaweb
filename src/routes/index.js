@@ -38,6 +38,11 @@ function RoutesApp(){
           <CreateCollaborators/> 
         </Private>
       } />
+       <Route path="/create-collaborators/:id" element={ 
+        <Private>
+          <CreateCollaborators/> 
+        </Private>
+      } />
       <Route path="/new" element={ 
         <Private>
           <New/> 

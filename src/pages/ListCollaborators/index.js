@@ -33,6 +33,9 @@ export default function ListCollaborators() {
   const [collaborators, setCollaborators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [lastDocs, setLastDocs] = useState();
+  const [loadindMore, setLoadingMore] = useState(false);
+
 
   useEffect(() => {
     async function loadCollaborators() {
@@ -81,10 +84,33 @@ export default function ListCollaborators() {
         });
       });
 
+      const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]; //Pegando o ultimo item da lista
+
       setCollaborators((collaborators) => [...collaborators, ...lista]);
+      setLastDocs(lastDoc);
+
     } else {
       setIsEmpty(true);
     }
+
+    setLoadingMore(false);
+  }
+
+  async function handleMore(){
+    setLoadingMore(true);
+
+    const userDetail = localStorage.getItem("@banawebPRO")
+    setUser(JSON.parse(userDetail))
+
+    if(userDetail){
+      const data = JSON.parse(userDetail);
+
+      const q = query(listRef, orderBy("created", "desc"), startAfter(lastDocs), limit(5), where("userId", "==", data?.uid));
+      const querySnapshot = await getDocs(q);
+      await updateState(querySnapshot);
+     
+    }    
+
   }
 
   if (loading) {
@@ -155,30 +181,29 @@ export default function ListCollaborators() {
                         <td data-label="Endereco">{item.endereco}</td>
                         <td data-label="Telefone">{item.telefone}</td>
                         <td data-label="#">
-                          <button
+                          <Link
                             className="action"
-                            style={{ backgroundColor: "#4db8ff" }}
-                          >
-                            <BsSearch color="#FFF" size={17} />
-                          </button>
-                          <button
-                            className="action"
+                            to={`/create-collaborators/${item.id}`}
                             style={{ backgroundColor: "#e6e600" }}
                           >
                             <BsFillPencilFill color="#FFF" size={17} />
-                          </button>
-                          <button
+                          </Link>
+                          <Link
                             className="action"
                             style={{ backgroundColor: "#ff0000" }}
                           >
                             <BsTrash3Fill color="#FFF" size={17} />
-                          </button>
+                          </Link>
                         </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
+              
+              { loadindMore && <h4 className="text-more">Buscando mais funcionários...</h4>}
+              {!loadindMore && !isEmpty && <button className="btn-more" onClick={handleMore}>Buscar +</button>}
+
             </>
           )}
         </>
