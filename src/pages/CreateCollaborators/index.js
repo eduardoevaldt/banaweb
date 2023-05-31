@@ -183,7 +183,7 @@ export default function CreateCollaborators() {
 
       <div className="content">
 
-      <Title name={id ? "Editando funcionário" : "Cadastrar Funcionário"}>
+      <Title name={id ? "Editando Funcionário" : "Cadastrar Funcionário"}>
           { id ?  <BsFillPencilFill size={22} /> : <BsPlusCircle size={24} />}
         </Title>
 
@@ -269,7 +269,7 @@ export default function CreateCollaborators() {
               onChange={(e) => setEndereco(e.target.value)}
             />
 
-            <button type="submit">Cadastrar</button>
+            <button type="submit">{id ? "Atualizar" : "Cadastrar"}</button>
           </form>
         </div>
       </div>

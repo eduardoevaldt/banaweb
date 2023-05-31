@@ -92,6 +92,7 @@ export default function Dashboard() {
     }
 
     setLoadingMore(false);
+
   }
 
   async function handleMore(){
@@ -182,6 +183,7 @@ export default function Dashboard() {
                         <td data-label="#">
                           <Link
                             className="action"
+                            to=""
                             style={{ backgroundColor: "#4db8ff" }}
                           >
                             <BsSearch color="#FFF" size={17} />
