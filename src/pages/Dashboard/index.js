@@ -18,16 +18,14 @@ import {
   limit,
   startAfter,
   query,
-  where
+  where,
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
-import { format } from "date-fns"
-
+import { format } from "date-fns";
 
 const listRef = collection(db, "services");
 
 export default function Dashboard() {
-
   const [user, setUser] = useState({});
 
   const [services, setServices] = useState([]);
@@ -39,18 +37,22 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadServices() {
+      const userDetail = localStorage.getItem("@banawebPRO");
+      setUser(JSON.parse(userDetail));
 
-      const userDetail = localStorage.getItem("@banawebPRO")
-      setUser(JSON.parse(userDetail))
-
-      if(userDetail){
+      if (userDetail) {
         const data = JSON.parse(userDetail);
 
-        const q = query(listRef, orderBy("created", "desc"), limit(5), where("userId", "==", data?.uid));
+        const q = query(
+          listRef,
+          orderBy("created", "desc"),
+          limit(5),
+          where("userId", "==", data?.uid)
+        );
 
         const querySnapshot = await getDocs(q);
         await updateState(querySnapshot);
-  
+
         setLoading(false);
       }
     }
@@ -75,15 +77,15 @@ export default function Dashboard() {
           machineId: doc.data().machineId,
           setor: doc.data().setor,
           created: doc.data().created,
-          createdFormat: format(doc.data().created.toDate(), 'dd/MM/yyyy'),
+          createdFormat: format(doc.data().created.toDate(), "dd/MM/yyyy"),
           area: doc.data().area,
           andamento: doc.data().andamento,
-          descricao: doc.data().descricao
+          descricao: doc.data().descricao,
         });
       });
 
       const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]; //Pegando o ultimo item da lista
-      
+
       setServices((services) => [...services, ...lista]);
       setLastDocs(lastDoc);
 
@@ -92,30 +94,34 @@ export default function Dashboard() {
     }
 
     setLoadingMore(false);
-
   }
 
-  async function handleMore(){
+  async function handleMore() {
     setLoadingMore(true);
 
-    const userDetail = localStorage.getItem("@banawebPRO")
-    setUser(JSON.parse(userDetail))
+    const userDetail = localStorage.getItem("@banawebPRO");
+    setUser(JSON.parse(userDetail));
 
-    if(userDetail){
+    if (userDetail) {
       const data = JSON.parse(userDetail);
 
-      const q = query(listRef, orderBy("created", "desc"), startAfter(lastDocs), limit(5), where("userId", "==", data?.uid));
+      const q = query(
+        listRef,
+        orderBy("created", "desc"),
+        startAfter(lastDocs),
+        limit(5),
+        where("userId", "==", data?.uid)
+      );
       const querySnapshot = await getDocs(q);
       await updateState(querySnapshot);
-     
-    }    
-
+      
+    }
   }
 
-  if(loading){
-    return(
+  if (loading) {
+    return (
       <div>
-        <Header/>
+        <Header />
         <div className="content">
           <Title name="Serviços">
             <BsCardText size={24} />
@@ -126,7 +132,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -160,21 +166,28 @@ export default function Dashboard() {
                     <th scope="col">Área</th>
                     <th scope="col">Andamento</th>
                     <th scope="col">Data</th>
-                    <th scope="col"><BsFillGearFill size={15} /></th>
+                    <th scope="col">
+                      <BsFillGearFill size={15} />
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {services.map((item, index) => {
                     return (
                       <tr key={index}>
-                        <td data-label="Collaborator">{item.collaborator}</td>
+                        <td data-label="Collaborators">{item.collaborator}</td>
                         <td data-label="Machines">{item.machine}</td>
                         <td data-label="Setor">{item.setor}</td>
                         <td data-label="Area">{item.area}</td>
                         <td data-label="Andamento">
                           <span
                             className="badge"
-                            style={{ backgroundColor: item.andamento === 'Em andamento' ? '#999' : '#5cb85c' }}
+                            style={{
+                              backgroundColor:
+                                item.andamento === "Em andamento"
+                                  ? "#999"
+                                  : "#5cb85c",
+                            }}
                           >
                             {item.andamento}
                           </span>
@@ -202,8 +215,14 @@ export default function Dashboard() {
                 </tbody>
               </table>
 
-              { loadindMore && <h4 className="text-more">Buscando mais serviços...</h4>}
-              {!loadindMore && !isEmpty && <button className="btn-more" onClick={handleMore}>Buscar +</button>}
+              {loadindMore && (
+                <h4 className="text-more">Buscando mais serviços...</h4>
+              )}
+              {!loadindMore && !isEmpty && (
+                <button className="btn-more" onClick={handleMore}>
+                  Buscar +
+                </button>
+              )}
             </>
           )}
         </>

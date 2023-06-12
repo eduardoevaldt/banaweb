@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import "./listCollaborators.css";
 
 import { db } from "../../services/firebaseConnection";
 import {
@@ -12,6 +11,7 @@ import {
   BsSearch,
   BsFillGearFill,
   BsTrash3Fill,
+  BsHammer,
 } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import {
@@ -25,12 +25,12 @@ import {
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 
-const listRef = collection(db, "collaborators");
+const listRef = collection(db, "machines");
 
-export default function ListCollaborators() {
+export default function ListMachines() {
   const [user, setUser] = useState({});
 
-  const [collaborators, setCollaborators] = useState([]);
+  const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEmpty, setIsEmpty] = useState(false);
   const [lastDocs, setLastDocs] = useState();
@@ -38,7 +38,7 @@ export default function ListCollaborators() {
 
 
   useEffect(() => {
-    async function loadCollaborators() {
+    async function loadMachines() {
       const userDetail = localStorage.getItem("@banawebPRO");
       setUser(JSON.parse(userDetail));
 
@@ -59,7 +59,7 @@ export default function ListCollaborators() {
       }
     }
 
-    loadCollaborators();
+    loadMachines();
 
     return () => {};
   }, []);
@@ -73,20 +73,16 @@ export default function ListCollaborators() {
       querySnapshot.forEach((doc) => {
         lista.push({
           id: doc.id,
+          categoria: doc.data().categoria,
           nome: doc.data().nome,
-          cpf: doc.data().cpf,
-          empresa: doc.data().empresa,
-          cnpjEmpresa: doc.data().cnpjEmpresa,
-          funcao: doc.data().funcao,
-          cbo: doc.data().cbo,
-          telefone: doc.data().telefone,
-          endereco: doc.data().endereco,
+          marca: doc.data().marca,
+          descricao: doc.data().descricao,
         });
       });
 
       const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1]; //Pegando o ultimo item da lista
 
-      setCollaborators((collaborators) => [...collaborators, ...lista]);
+      setMachines((machines) => [...machines, ...lista]);
       setLastDocs(lastDoc);
 
     } else {
@@ -118,12 +114,12 @@ export default function ListCollaborators() {
       <div>
         <Header />
         <div className="content">
-          <Title name="Funcionários">
-            <BsPeopleFill size={25} />
+          <Title name="Maquinaria">
+            <BsHammer size={25} />
           </Title>
 
           <div className="container dashboard">
-            <span>Buscando funcionários...</span>
+            <span>Buscando máquinas...</span>
           </div>
         </div>
       </div>
@@ -135,53 +131,47 @@ export default function ListCollaborators() {
       <Header />
 
       <div className="content">
-        <Title name="Funcionários">
-          <BsPeopleFill size={25} />
+        <Title name="Maquinaria">
+          <BsHammer size={25} />
         </Title>
 
         <>
-          {collaborators.length === 0 ? (
+          {machines.length === 0 ? (
             <div className="container dashboard">
-              <span>Nenhum funcionário encontrado...</span>
-              <Link to="/create-collaborators" className="new">
+              <span>Nenhuma máquina encontrada...</span>
+              <Link to="/create-machines" className="new">
                 + Adicionar
               </Link>
             </div>
           ) : (
             <>
-              <Link to="/create-collaborators" className="new">
+              <Link to="/create-machines" className="new">
                 + Adicionar
               </Link>
               <table>
                 <thead>
                   <tr>
+                    <th scope="col">Categoria</th>
                     <th scope="col">Nome</th>
-                    <th scope="col">CPF</th>
-                    <th scope="col">Empresa</th>
-                    <th scope="col">CBO</th>
-                    <th scope="col">Função</th>
-                    <th scope="col">Endereço</th>
-                    <th scope="col">Telefone</th>
+                    <th scope="col">Marca</th>
+                    <th scope="col">Descrição</th>
                     <th scope="col">
                       <BsFillGearFill size={15} />
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {collaborators.map((item, index) => {
+                  {machines.map((item, index) => {
                     return (
                       <tr key={index}>
+                        <td data-label="Categoria">{item.categoria}</td>
                         <td data-label="Nome">{item.nome}</td>
-                        <td data-label="CPF">{item.cpf}</td>
-                        <td data-label="Empresa">{item.empresa}</td>
-                        <td data-label="CBO">{item.cbo}</td>
-                        <td data-label="Função">{item.funcao}</td>
-                        <td data-label="Endereco">{item.endereco}</td>
-                        <td data-label="Telefone">{item.telefone}</td>
+                        <td data-label="Marca">{item.marca}</td>
+                        <td data-label="Descrição">{item.descricao}</td>
                         <td data-label="#">
                           <Link
                             className="action"
-                            to={`/create-collaborators/${item.id}`}
+                            to={`/create-machines/${item.id}`}
                             style={{ backgroundColor: "#e6e600" }}
                           >
                             <BsFillPencilFill color="#FFF" size={17} />
@@ -199,7 +189,7 @@ export default function ListCollaborators() {
                 </tbody>
               </table>
               
-              { loadindMore && <h4 className="text-more">Buscando mais funcionários...</h4>}
+              { loadindMore && <h4 className="text-more">Buscando maquinaria...</h4>}
               {!loadindMore && !isEmpty && <button className="btn-more" onClick={handleMore}>Buscar +</button>}
 
             </>

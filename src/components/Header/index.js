@@ -30,7 +30,7 @@ export default function Header(){
         Fornecedores
       </Link>
 
-      <Link to="/machines">
+      <Link to="/list-machines">
         <BsHammer color="#FFF" size={20} />
         Maquinaria
       </Link>

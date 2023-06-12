@@ -1,25 +1,123 @@
 import { useContext, useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import { BsPlusCircle } from "react-icons/bs";
+import { BsFillPencilFill, BsPlusCircle } from "react-icons/bs";
 import { toast } from "react-toastify";
 
 import { db } from "../../services/firebaseConnection";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 
 import {AuthContext} from '../../contexts/auth'
+import { useNavigate, useParams } from "react-router-dom";
+
+const listRef = collection(db, "machines");
 
 export default function CreateMachines() {
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [machines, setMachines] = useState([]);
+  const [loadMachine, setLoadMachine] = useState(true);
+  const [machineSelected, setMachineSelected] = useState(0)
   
   const [categoria, setCategoria] = useState("Veiculo");
   const [nome, setNome] = useState("");
   const [marca, setMarca] = useState("");
   const [descricao, setDescricao] = useState("");
+  const [idMachine, setIdMachine] = useState(false);
+
+
+  useEffect(() => {
+
+    async function loadMachines() {
+      const querySnapshot = await getDocs(listRef)
+        .then((snapshot) => {
+          let lista = [];
+
+          snapshot.forEach((doc) => {
+            lista.push({
+              id: doc.id,
+              categoria: doc.data().categoria,
+              nome: doc.data().nome,
+              marca: doc.data().marca,
+              descricao: doc.data().descricao,
+            });
+          });
+
+          if (snapshot.docs.size === 0) {
+            console.log("NENHUMA MÁQUINA ENCONTRADA");
+            setMachines([{ id: "1", nome: "MÁQUINA X" }]);
+            setLoadMachine(false);
+            return;
+          }
+
+          setMachines(lista);
+          setLoadMachine(false);
+
+          if(id){
+            loadIdMachines(lista);
+          }
+
+        })
+        .catch((error) => {
+          console.log("ERRO AO BUSCAR MAQUINARIA", error);
+          setLoadMachine(false);
+          setMachines([{ id: "1", nome: "MÁQUINA X" }]);
+        });
+    }
+
+    loadMachines();
+
+  }, [id]);
+
+  async function loadIdMachines(lista){
+    const docRef = doc(db, "machines", id);
+    await getDoc(docRef)
+    .then((snapshot) => {
+      setCategoria(snapshot.data().categoria);
+      setNome(snapshot.data().nome);
+      setMarca(snapshot.data().marca);
+      setDescricao(snapshot.data().descricao);
+
+      let index = lista.findIndex(item => item.id === snapshot.data().id)
+      setMachineSelected(index);
+      setIdMachine(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setIdMachine(false);
+    })
+  }
+
 
   async function handleRegister(e) {
     e.preventDefault();
 
+    if(id){
+      //Atualizando máquina
+      const docRef = doc(db, "machines", id)
+      await updateDoc(docRef, {
+        categoria: categoria,
+        nome: nome,
+        marca: marca,
+        descricao: descricao,
+        userId: user?.uid,
+      })
+      .then(() => {
+        toast.info("Máquina atualizada com sucesso!");
+        setMachineSelected(0);
+        navigate('/list-machines');
+      })
+      .catch((error) => {
+        toast.error("Ops, erro ao atualizar!");
+        console.log(error);
+      })
+     
+      return;
+    }
+
+    //Cadastrar máquina
     if (
       categoria !== "" &&
       nome !== "" &&
@@ -32,14 +130,14 @@ export default function CreateMachines() {
         nome: nome,
         marca: marca,
         descricao: descricao,
-        userId: user?.uid
+        userId: user?.uid,
       })
         .then(() => {
           setCategoria("");
           setNome("");
           setMarca("");
           setDescricao("");
-          toast.success("Item de maquinaria cadastrado!");
+          toast.success("Máquina cadastrada!");
         })
         .catch((error) => {
           console.log(error);
@@ -48,6 +146,7 @@ export default function CreateMachines() {
     } else {
       toast.error("Preencha todos os campos!");
     }
+  
   }
 
   function handleChangeSelectCategoria(e) {
@@ -59,8 +158,9 @@ export default function CreateMachines() {
       <Header />
 
       <div className="content">
-        <Title name="Adicionar Máquina">
-          <BsPlusCircle size={25} />
+        
+        <Title name={id ? "Editando Máquina" : "Cadastrar Máquina"}>
+          { id ?  <BsFillPencilFill size={22} /> : <BsPlusCircle size={24} />}
         </Title>
 
         <div className="container">
@@ -106,7 +206,7 @@ export default function CreateMachines() {
               onChange={(e) => setDescricao(e.target.value)}
             />
 
-            <button type="submit">Cadastrar</button>
+            <button type="submit">{id ? "Atualizar" : "Cadastrar"}</button>
           </form>
         </div>
       </div>

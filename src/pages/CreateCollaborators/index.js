@@ -183,7 +183,7 @@ export default function CreateCollaborators() {
 
       <div className="content">
 
-      <Title name={id ? "Editando Funcionário" : "Cadastrar Funcionário"}>
+        <Title name={id ? "Editando Funcionário" : "Cadastrar Funcionário"}>
           { id ?  <BsFillPencilFill size={22} /> : <BsPlusCircle size={24} />}
         </Title>
 

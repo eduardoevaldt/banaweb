@@ -8,6 +8,7 @@ import ResetPassword from '../pages/ResetPassword'
 import ListCollaborators from '../pages/ListCollaborators';
 import CreateCollaborators from '../pages/CreateCollaborators';
 import New from '../pages/New';
+import ListMachines from '../pages/ListMachines';
 import CreateMachines from '../pages/CreateMachines';
 
 import Private from './Private'
@@ -53,7 +54,17 @@ function RoutesApp(){
           <New/> 
         </Private>
       } />
-        <Route path="/machines" element={ 
+       <Route path="/list-machines" element={ 
+        <Private>
+          <ListMachines/> 
+        </Private>
+      } />
+        <Route path="/create-machines" element={ 
+        <Private>
+          <CreateMachines/> 
+        </Private>
+      } />
+       <Route path="/create-machines/:id" element={ 
         <Private>
           <CreateMachines/> 
         </Private>
