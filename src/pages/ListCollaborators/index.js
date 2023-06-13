@@ -197,6 +197,13 @@ export default function ListCollaborators() {
                         <td data-label="Endereco">{item.endereco}</td>
                         <td data-label="Telefone">{item.telefone}</td>
                         <td data-label="#">
+                        <Link
+                            className="action"
+                            to=""
+                            style={{ backgroundColor: "#4db8ff" }}
+                          >
+                            <BsSearch color="#FFF" size={17} />
+                          </Link>
                           <Link
                             className="action"
                             to={`/create-collaborators/${item.id}`}

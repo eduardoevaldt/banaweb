@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 import { format } from "date-fns";
+import Modal from '../../components/Modal'
 
 const listRef = collection(db, "services");
 
@@ -34,6 +35,9 @@ export default function Dashboard() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [lastDocs, setLastDocs] = useState();
   const [loadindMore, setLoadingMore] = useState(false);
+
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [detail, setDetail] = useState();
 
   useEffect(() => {
     async function loadServices() {
@@ -118,6 +122,11 @@ export default function Dashboard() {
     }
   }
 
+  function toggleModal(item){
+    setShowPostModal(!showPostModal)
+    setDetail(item)
+  }
+
   if (loading) {
     return (
       <div>
@@ -195,8 +204,8 @@ export default function Dashboard() {
                         <td data-label="Cadastrado">{item.createdFormat}</td>
                         <td data-label="#">
                           <Link
+                            onClick={ () => toggleModal(item)}
                             className="action"
-                            to=""
                             style={{ backgroundColor: "#4db8ff" }}
                           >
                             <BsSearch color="#FFF" size={17} />
@@ -227,6 +236,14 @@ export default function Dashboard() {
           )}
         </>
       </div>
+        
+      {showPostModal && (
+        <Modal
+          conteudo={detail}
+          close={ () => setShowPostModal(!showPostModal)}
+        />
+      )}
+  
     </div>
   );
 }
