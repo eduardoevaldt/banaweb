@@ -13,7 +13,7 @@ import {
   BsFillGearFill,
   BsTrash3Fill,
 } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   collection,
   getDocs,
@@ -22,13 +22,17 @@ import {
   startAfter,
   query,
   where,
+  doc, 
+  deleteDoc
 } from "firebase/firestore";
 import { toast } from "react-toastify";
+import { Button } from "bootstrap";
 
 const listRef = collection(db, "collaborators");
 
 export default function ListCollaborators() {
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const [collaborators, setCollaborators] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +117,20 @@ export default function ListCollaborators() {
 
   }
 
+  async function deleteCollaborator(id){
+    const docRef = doc(db, "collaborators", id);
+
+    await deleteDoc(docRef)
+    .then(() => {
+      navigate('/dashboard');
+      toast.info("Funcionário deletado com sucesso!");
+    })
+    .catch((error) => {
+      toast.error("Ops, erro ao deletar esse funcionário!");
+      console.log(error);
+    })
+  }
+
   if (loading) {
     return (
       <div>
@@ -168,8 +186,8 @@ export default function ListCollaborators() {
                   </tr>
                 </thead>
                 <tbody>
-                  {collaborators.map((item, index) => {
-                    return (
+                  {collaborators.map((item, index) => (
+                  
                       <tr key={index}>
                         <td data-label="Nome">{item.nome}</td>
                         <td data-label="CPF">{item.cpf}</td>
@@ -187,6 +205,7 @@ export default function ListCollaborators() {
                             <BsFillPencilFill color="#FFF" size={17} />
                           </Link>
                           <Link
+                            onClick={() => deleteCollaborator(item.id)}
                             className="action"
                             style={{ backgroundColor: "#ff0000" }}
                           >
@@ -194,8 +213,7 @@ export default function ListCollaborators() {
                           </Link>
                         </td>
                       </tr>
-                    );
-                  })}
+                  ))}
                 </tbody>
               </table>
               

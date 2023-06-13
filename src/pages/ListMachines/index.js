@@ -13,7 +13,7 @@ import {
   BsTrash3Fill,
   BsHammer,
 } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   collection,
   getDocs,
@@ -22,6 +22,8 @@ import {
   startAfter,
   query,
   where,
+  doc,
+  deleteDoc,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 
@@ -29,6 +31,7 @@ const listRef = collection(db, "machines");
 
 export default function ListMachines() {
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const [machines, setMachines] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,6 +112,20 @@ export default function ListMachines() {
 
   }
 
+  async function deleteMachine(id){
+    const docRef = doc(db, "machines", id);
+
+    await deleteDoc(docRef)
+    .then(() => {
+      navigate('/dashboard');
+      toast.info("Máquina deletada com sucesso!");
+    })
+    .catch((error) => {
+      toast.error("Ops, erro ao deletar essa máquina!");
+      console.log(error);
+    })
+  }
+
   if (loading) {
     return (
       <div>
@@ -177,6 +194,7 @@ export default function ListMachines() {
                             <BsFillPencilFill color="#FFF" size={17} />
                           </Link>
                           <Link
+                          onClick={() => deleteMachine(item.id)}
                             className="action"
                             style={{ backgroundColor: "#ff0000" }}
                           >

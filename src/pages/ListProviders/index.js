@@ -12,7 +12,7 @@ import {
   BsTrash3Fill,
   BsPersonLinesFill,
 } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   collection,
   getDocs,
@@ -21,6 +21,8 @@ import {
   startAfter,
   query,
   where,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 
@@ -28,6 +30,7 @@ const listRef = collection(db, "providers");
 
 export default function ListProviders() {
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -112,6 +115,20 @@ export default function ListProviders() {
 
   }
 
+  async function deleteProvider(id){
+    const docRef = doc(db, "providers", id);
+
+    await deleteDoc(docRef)
+    .then(() => {
+      navigate('/dashboard');
+      toast.info("Fornecedor deletado com sucesso!");
+    })
+    .catch((error) => {
+      toast.error("Ops, erro ao deletar esse fornecedor!");
+      console.log(error);
+    })
+  }
+
   if (loading) {
     return (
       <div>
@@ -186,6 +203,7 @@ export default function ListProviders() {
                             <BsFillPencilFill color="#FFF" size={17} />
                           </Link>
                           <Link
+                          onClick={() => deleteProvider(item.id)}
                             className="action"
                             style={{ backgroundColor: "#ff0000" }}
                           >
