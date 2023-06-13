@@ -10,6 +10,8 @@ import CreateCollaborators from '../pages/CreateCollaborators';
 import New from '../pages/New';
 import ListMachines from '../pages/ListMachines';
 import CreateMachines from '../pages/CreateMachines';
+import ListProviders from '../pages/ListProviders';
+import CreateProviders from '../pages/CreateProviders';
 
 import Private from './Private'
 
@@ -67,6 +69,21 @@ function RoutesApp(){
        <Route path="/create-machines/:id" element={ 
         <Private>
           <CreateMachines/> 
+        </Private>
+      } />
+      <Route path="/list-providers" element={ 
+        <Private>
+          <ListProviders/> 
+        </Private>
+      } />
+      <Route path="/create-providers" element={ 
+        <Private>
+          <CreateProviders/> 
+        </Private>
+      } />
+      <Route path="/create-providers/:id" element={ 
+        <Private>
+          <CreateProviders/> 
         </Private>
       } />
 

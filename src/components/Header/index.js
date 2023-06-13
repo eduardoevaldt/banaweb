@@ -25,7 +25,7 @@ export default function Header(){
         Funcionários
       </Link>
 
-      <Link to="">
+      <Link to="/list-providers">
         <BsPersonLinesFill color="#FFF" size={20} />
         Fornecedores
       </Link>
