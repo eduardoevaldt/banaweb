@@ -30,6 +30,7 @@ export default function CreateCollaborators() {
   const [cbo, setCbo] = useState("");
   const [telefone, setTelefone] = useState("");
   const [endereco, setEndereco] = useState("");
+  const [admissao, setAdmissao] = useState("");
   const [idCollaborator, setIdCollaborator] = useState(false);
 
 
@@ -51,6 +52,7 @@ export default function CreateCollaborators() {
               cbo: doc.data().cbo,
               telefone: doc.data().telefone,
               endereco: doc.data().endereco,
+              admissao: doc.data().admissao
             });
           });
 
@@ -92,6 +94,7 @@ export default function CreateCollaborators() {
       setCbo(snapshot.data().cbo);
       setTelefone(snapshot.data().telefone);
       setEndereco(snapshot.data().endereco);
+      setAdmissao(snapshot.data().admissao);
 
       let index = lista.findIndex(item => item.id === snapshot.data().id)
       setCollaboratorSelected(index);
@@ -119,6 +122,7 @@ export default function CreateCollaborators() {
         cbo: cbo,
         telefone: telefone,
         endereco: endereco,
+        admissao: admissao,
         userId: user?.uid,
       })
       .then(() => {
@@ -143,7 +147,8 @@ export default function CreateCollaborators() {
       funcao !== "" &&
       cbo !== "" &&
       telefone !== "" &&
-      endereco !== ""
+      endereco !== "" &&
+      admissao !== ""
     ) {
       await addDoc(collection(db, "collaborators"), {
         created: new Date(),
@@ -155,6 +160,7 @@ export default function CreateCollaborators() {
         cbo: cbo,
         telefone: telefone,
         endereco: endereco,
+        admissao: admissao,
         userId: user?.uid,
       })
         .then(() => {
@@ -166,6 +172,7 @@ export default function CreateCollaborators() {
           setCbo("");
           setTelefone("");
           setEndereco("");
+          setAdmissao("");
           toast.success("Funcionário cadastrado!");
         })
         .catch((error) => {
@@ -227,6 +234,16 @@ export default function CreateCollaborators() {
               placeholder="Informe o CNPJ da empresa"
               value={cnpjEmpresa}
               onChange={(e) => setCnpjEmpresa(e.target.value)}
+            />
+            
+            <span>
+              <strong>Data de Admissão</strong>
+            </span>
+            <input
+              type="text"
+              placeholder="Informe a data de admissão"
+              value={admissao}
+              onChange={(e) => setAdmissao(e.target.value)}
             />
 
             <span>

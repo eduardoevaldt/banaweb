@@ -27,6 +27,7 @@ import {
 } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { Button } from "bootstrap";
+import ModalCollaborators from "../../components/ModalCollaborators";
 
 const listRef = collection(db, "collaborators");
 
@@ -39,6 +40,9 @@ export default function ListCollaborators() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [lastDocs, setLastDocs] = useState();
   const [loadindMore, setLoadingMore] = useState(false);
+
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [detail, setDetail] = useState();
 
 
   useEffect(() => {
@@ -85,6 +89,7 @@ export default function ListCollaborators() {
           cbo: doc.data().cbo,
           telefone: doc.data().telefone,
           endereco: doc.data().endereco,
+          admissao: doc.data().admissao
         });
       });
 
@@ -129,6 +134,11 @@ export default function ListCollaborators() {
       toast.error("Ops, erro ao deletar esse funcionário!");
       console.log(error);
     })
+  }
+
+  function toggleModal(item){
+    setShowPostModal(!showPostModal)
+    setDetail(item)
   }
 
   if (loading) {
@@ -176,10 +186,7 @@ export default function ListCollaborators() {
                     <th scope="col">Nome</th>
                     <th scope="col">CPF</th>
                     <th scope="col">Empresa</th>
-                    <th scope="col">CBO</th>
                     <th scope="col">Função</th>
-                    <th scope="col">Endereço</th>
-                    <th scope="col">Telefone</th>
                     <th scope="col">
                       <BsFillGearFill size={15} />
                     </th>
@@ -192,14 +199,11 @@ export default function ListCollaborators() {
                         <td data-label="Nome">{item.nome}</td>
                         <td data-label="CPF">{item.cpf}</td>
                         <td data-label="Empresa">{item.empresa}</td>
-                        <td data-label="CBO">{item.cbo}</td>
                         <td data-label="Função">{item.funcao}</td>
-                        <td data-label="Endereco">{item.endereco}</td>
-                        <td data-label="Telefone">{item.telefone}</td>
                         <td data-label="#">
                         <Link
+                            onClick={ () => toggleModal(item)}
                             className="action"
-                            to=""
                             style={{ backgroundColor: "#4db8ff" }}
                           >
                             <BsSearch color="#FFF" size={17} />
@@ -231,6 +235,12 @@ export default function ListCollaborators() {
           )}
         </>
       </div>
+      {showPostModal && (
+        <ModalCollaborators
+          conteudo={detail}
+          close={ () => setShowPostModal(!showPostModal)}
+        />
+      )}
     </div>
   );
 }

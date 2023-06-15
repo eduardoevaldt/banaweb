@@ -35,6 +35,9 @@ export default function Modal({ conteudo, close }) {
             <span>
               Setor: <i>{conteudo.setor}</i>
             </span>
+          </div>
+
+          <div className="row">
             <span>
               Cadastrado em: <i>{conteudo.createdFormat}</i>
             </span>
