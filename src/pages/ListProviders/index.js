@@ -11,6 +11,7 @@ import {
   BsFillGearFill,
   BsTrash3Fill,
   BsPersonLinesFill,
+  BsSearch,
 } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -25,6 +26,8 @@ import {
   doc,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
+import ModalProviders from "../../components/ModalProviders";
+import ModalDeleteProvider from "../../components/ModalDeleteProvider";
 
 const listRef = collection(db, "providers");
 
@@ -37,6 +40,13 @@ export default function ListProviders() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [lastDocs, setLastDocs] = useState();
   const [loadindMore, setLoadingMore] = useState(false);
+
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [detail, setDetail] = useState();
+
+  const [showPostModalDelete, setShowPostModalDelete] = useState(false);
+  const [idDelete, setIdDelete] = useState();
+
 
 
   useEffect(() => {
@@ -120,14 +130,25 @@ export default function ListProviders() {
 
     await deleteDoc(docRef)
     .then(() => {
-      navigate('/dashboard');
-      toast.info("Fornecedor deletado com sucesso!");
+      window.location.reload();
+      toast.success("Fornecedor deletado com sucesso!");
     })
     .catch((error) => {
       toast.error("Ops, erro ao deletar esse fornecedor!");
       console.log(error);
     })
   }
+
+  function toggleModal(item){
+    setShowPostModal(!showPostModal)
+    setDetail(item)
+  }
+
+  function toggleModalDelete(id){
+    setShowPostModalDelete(!showPostModalDelete)
+    setIdDelete(id)
+  }
+
 
   if (loading) {
     return (
@@ -173,10 +194,7 @@ export default function ListProviders() {
                   <tr>
                     <th scope="col">Nome</th>
                     <th scope="col">CPF</th>
-                    <th scope="col">Endereço</th>
-                    <th scope="col">Inscrição Estadual</th>
                     <th scope="col">Produto Vendido</th>
-                    <th scope="col">Certificadora</th>
                     <th scope="col">Data do Certificado</th>
                     <th scope="col">
                       <BsFillGearFill size={15} />
@@ -189,12 +207,16 @@ export default function ListProviders() {
                       <tr key={index}>
                         <td data-label="Nome">{item.nome}</td>
                         <td data-label="CPF">{item.cpf}</td>
-                        <td data-label="Endereço">{item.endereco}</td>
-                        <td data-label="Inscrição Estadual">{item.inscricaoEstadual}</td>
                         <td data-label="Produto Vendido">{item.prodVendido}</td>
-                        <td data-label="Certificadora">{item.certificadora}</td>
                         <td data-label="Data do Certificado">{item.dataCert}</td>
                         <td data-label="Ações">
+                        <Link
+                            onClick={ () => toggleModal(item)}
+                            className="action"
+                            style={{ backgroundColor: "#4db8ff" }}
+                          >
+                            <BsSearch color="#FFF" size={17} />
+                          </Link>
                           <Link
                             className="action"
                             to={`/create-providers/${item.id}`}
@@ -203,7 +225,7 @@ export default function ListProviders() {
                             <BsFillPencilFill color="#FFF" size={17} />
                           </Link>
                           <Link
-                          onClick={() => deleteProvider(item.id)}
+                             onClick={ () => toggleModalDelete(item.id)}
                             className="action"
                             style={{ backgroundColor: "#ff0000" }}
                           >
@@ -223,6 +245,21 @@ export default function ListProviders() {
           )}
         </>
       </div>
+
+      {showPostModal && (
+        <ModalProviders
+          conteudo={detail}
+          close={ () => setShowPostModal(!showPostModal)}
+        />
+      )}
+
+      {showPostModalDelete && (
+        <ModalDeleteProvider
+          close={ () => setShowPostModalDelete(!showPostModalDelete)}
+          redirect= { () => deleteProvider(idDelete)}
+        />
+      )}
+
     </div>
   );
 }
