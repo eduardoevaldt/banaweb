@@ -1,7 +1,7 @@
 import { BsX } from "react-icons/bs";
 import "./modal.css";
 
-export default function Modal({ conteudo, close }) {
+export default function ModalServices({ conteudo, close }) {
   return (
     <div className="modal">
       <div className="container">

@@ -25,10 +25,11 @@ import {
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 import { format } from "date-fns";
-import Modal from '../../components/Modal'
+import Modal from '../../components/ModalServices'
 import { toast } from "react-toastify";
 import { reload } from "firebase/auth";
 import ModalDeleteService from "../../components/ModalDeleteService";
+import ModalServices from "../../components/ModalServices";
 
 const listRef = collection(db, "services");
 
@@ -274,7 +275,7 @@ export default function Dashboard() {
       </div>
         
       {showPostModal && (
-        <Modal
+        <ModalServices
           conteudo={detail}
           close={ () => setShowPostModal(!showPostModal)}
         />
