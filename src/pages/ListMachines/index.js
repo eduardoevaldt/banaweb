@@ -26,6 +26,8 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { toast } from "react-toastify";
+import ModalMachines from "../../components/ModalMachines";
+import ModalDeleteMachine from "../../components/ModalDeleteMachine";
 
 const listRef = collection(db, "machines");
 
@@ -38,6 +40,12 @@ export default function ListMachines() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [lastDocs, setLastDocs] = useState();
   const [loadindMore, setLoadingMore] = useState(false);
+
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [detail, setDetail] = useState();
+
+  const [showPostModalDelete, setShowPostModalDelete] = useState(false);
+  const [idDelete, setIdDelete] = useState();
 
 
   useEffect(() => {
@@ -117,13 +125,23 @@ export default function ListMachines() {
 
     await deleteDoc(docRef)
     .then(() => {
-      navigate('/dashboard');
-      toast.info("Máquina deletada com sucesso!");
+      window.location.reload();
+      toast.success("Máquina deletada com sucesso!");
     })
     .catch((error) => {
       toast.error("Ops, erro ao deletar essa máquina!");
       console.log(error);
     })
+  }
+
+  function toggleModal(item){
+    setShowPostModal(!showPostModal)
+    setDetail(item)
+  }
+
+  function toggleModalDelete(id){
+    setShowPostModalDelete(!showPostModalDelete)
+    setIdDelete(id)
   }
 
   if (loading) {
@@ -185,7 +203,14 @@ export default function ListMachines() {
                         <td data-label="Nome">{item.nome}</td>
                         <td data-label="Marca">{item.marca}</td>
                         <td data-label="Descrição">{item.descricao}</td>
-                        <td data-label="#">
+                        <td data-label="Ações">
+                        <Link
+                            onClick={ () => toggleModal(item)}
+                            className="action"
+                            style={{ backgroundColor: "#4db8ff" }}
+                          >
+                            <BsSearch color="#FFF" size={17} />
+                          </Link>
                           <Link
                             className="action"
                             to={`/create-machines/${item.id}`}
@@ -194,7 +219,7 @@ export default function ListMachines() {
                             <BsFillPencilFill color="#FFF" size={17} />
                           </Link>
                           <Link
-                          onClick={() => deleteMachine(item.id)}
+                            onClick={ () => toggleModalDelete(item.id)} 
                             className="action"
                             style={{ backgroundColor: "#ff0000" }}
                           >
@@ -214,6 +239,19 @@ export default function ListMachines() {
           )}
         </>
       </div>
+      {showPostModal && (
+        <ModalMachines
+          conteudo={detail}
+          close={ () => setShowPostModal(!showPostModal)}
+        />
+      )}
+
+      {showPostModalDelete && (
+        <ModalDeleteMachine
+          close={ () => setShowPostModalDelete(!showPostModalDelete)}
+          redirect= { () => deleteMachine(idDelete)}
+        />
+      )}
     </div>
   );
 }

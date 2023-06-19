@@ -101,7 +101,7 @@ table td .badge{
   padding: 0.1em;
 }
 
-@media screen and (max-width: 1140px){
+@media screen and (max-width: 1145px){
     table{
       border:0;
     };

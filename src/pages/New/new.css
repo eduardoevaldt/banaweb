@@ -20,3 +20,8 @@ form input[type="radio"]:not(:first-child){
 .status{
   margin-bottom: 1em;
 }
+
+.delete-service{
+  background-color: rgb(155, 13, 13);
+  margin-top: 1%;
+}

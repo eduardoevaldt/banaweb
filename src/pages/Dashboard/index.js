@@ -2,13 +2,14 @@ import { useContext, useEffect, useState } from "react";
 
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./dashboard.css";
 import {
   BsCardText,
   BsSearch,
   BsFillPencilFill,
   BsFillGearFill,
+  BsTrash3Fill
 } from "react-icons/bs";
 
 import {
@@ -19,15 +20,21 @@ import {
   startAfter,
   query,
   where,
+  doc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 import { format } from "date-fns";
 import Modal from '../../components/Modal'
+import { toast } from "react-toastify";
+import { reload } from "firebase/auth";
+import ModalDeleteService from "../../components/ModalDeleteService";
 
 const listRef = collection(db, "services");
 
 export default function Dashboard() {
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +45,9 @@ export default function Dashboard() {
 
   const [showPostModal, setShowPostModal] = useState(false);
   const [detail, setDetail] = useState();
+
+  const [showPostModalDelete, setShowPostModalDelete] = useState(false);
+  const [idDelete, setIdDelete] = useState();
 
   useEffect(() => {
     async function loadServices() {
@@ -127,6 +137,25 @@ export default function Dashboard() {
     setDetail(item)
   }
 
+  function toggleModalDelete(id){
+    setShowPostModalDelete(!showPostModalDelete)
+    setIdDelete(id)
+  }
+
+  async function deleteService(id){
+    const docRef = doc(db, "services", id);
+
+    await deleteDoc(docRef)
+    .then(() => {
+      window.location.reload();
+      toast.success("Serviço deletado com sucesso!");
+    })
+    .catch((error) => {
+      toast.error("Ops, erro ao deletar esse serviço!");
+      console.log(error);
+    })
+  }
+
   if (loading) {
     return (
       <div>
@@ -184,10 +213,10 @@ export default function Dashboard() {
                   {services.map((item, index) => {
                     return (
                       <tr key={index}>
-                        <td data-label="Collaborators">{item.collaborator}</td>
-                        <td data-label="Machines">{item.machine}</td>
+                        <td data-label="Funcionário">{item.collaborator}</td>
+                        <td data-label="Maquinario">{item.machine}</td>
                         <td data-label="Setor">{item.setor}</td>
-                        <td data-label="Area">{item.area}</td>
+                        <td data-label="Área">{item.area}</td>
                         <td data-label="Andamento">
                           <span
                             className="badge"
@@ -201,8 +230,8 @@ export default function Dashboard() {
                             {item.andamento}
                           </span>
                         </td>
-                        <td data-label="Cadastrado">{item.createdFormat}</td>
-                        <td data-label="#">
+                        <td data-label="Data">{item.createdFormat}</td>
+                        <td data-label="Ações">
                           <Link
                             onClick={ () => toggleModal(item)}
                             className="action"
@@ -216,6 +245,14 @@ export default function Dashboard() {
                             style={{ backgroundColor: "#e6e600" }}
                           >
                             <BsFillPencilFill color="#FFF" size={17} />
+                          </Link>
+                          <Link
+                            id="refresh"
+                            className="action"
+                            onClick={ () => toggleModalDelete(item.id)} 
+                            style={{ backgroundColor: "#ff0000" }}
+                          >
+                            <BsTrash3Fill color="#FFF" size={17} />
                           </Link>
                         </td>
                       </tr>
@@ -243,7 +280,14 @@ export default function Dashboard() {
           close={ () => setShowPostModal(!showPostModal)}
         />
       )}
-  
+
+      {showPostModalDelete && (
+        <ModalDeleteService
+          close={ () => setShowPostModalDelete(!showPostModalDelete)}
+          redirect= { () => deleteService(idDelete)}
+        />
+      )}
+
     </div>
   );
 }

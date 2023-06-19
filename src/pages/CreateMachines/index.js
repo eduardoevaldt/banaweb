@@ -173,6 +173,7 @@ export default function CreateMachines() {
               <option value="Bomba">Bomba</option>
               <option value="Máquina">Máquina</option>
               <option value="Maquinário de Engate">Maquinário de Engate Hidráulico</option>
+              <option value="Ferramentas Manuais">Ferramentas Manuais</option>
             </select>
 
             <span>

@@ -56,6 +56,7 @@ function RoutesApp(){
           <New/> 
         </Private>
       } />
+      
        <Route path="/list-machines" element={ 
         <Private>
           <ListMachines/> 

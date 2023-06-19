@@ -28,6 +28,7 @@ import {
 import { toast } from "react-toastify";
 import { Button } from "bootstrap";
 import ModalCollaborators from "../../components/ModalCollaborators";
+import ModalDeleteCollaborator from "../../components/ModalDeleteCollaborator";
 
 const listRef = collection(db, "collaborators");
 
@@ -43,6 +44,9 @@ export default function ListCollaborators() {
 
   const [showPostModal, setShowPostModal] = useState(false);
   const [detail, setDetail] = useState();
+
+  const [showPostModalDelete, setShowPostModalDelete] = useState(false);
+  const [idDelete, setIdDelete] = useState();
 
 
   useEffect(() => {
@@ -127,8 +131,8 @@ export default function ListCollaborators() {
 
     await deleteDoc(docRef)
     .then(() => {
-      navigate('/dashboard');
-      toast.info("Funcionário deletado com sucesso!");
+      window.location.reload();
+      toast.success("Funcionário deletado com sucesso!");
     })
     .catch((error) => {
       toast.error("Ops, erro ao deletar esse funcionário!");
@@ -140,6 +144,12 @@ export default function ListCollaborators() {
     setShowPostModal(!showPostModal)
     setDetail(item)
   }
+
+  function toggleModalDelete(id){
+    setShowPostModalDelete(!showPostModalDelete)
+    setIdDelete(id)
+  }
+
 
   if (loading) {
     return (
@@ -200,7 +210,7 @@ export default function ListCollaborators() {
                         <td data-label="CPF">{item.cpf}</td>
                         <td data-label="Empresa">{item.empresa}</td>
                         <td data-label="Função">{item.funcao}</td>
-                        <td data-label="#">
+                        <td data-label="Ações">
                         <Link
                             onClick={ () => toggleModal(item)}
                             className="action"
@@ -216,7 +226,7 @@ export default function ListCollaborators() {
                             <BsFillPencilFill color="#FFF" size={17} />
                           </Link>
                           <Link
-                            onClick={() => deleteCollaborator(item.id)}
+                            onClick={ () => toggleModalDelete(item.id)}
                             className="action"
                             style={{ backgroundColor: "#ff0000" }}
                           >
@@ -239,6 +249,13 @@ export default function ListCollaborators() {
         <ModalCollaborators
           conteudo={detail}
           close={ () => setShowPostModal(!showPostModal)}
+        />
+      )}
+
+      {showPostModalDelete && (
+        <ModalDeleteCollaborator
+          close={ () => setShowPostModalDelete(!showPostModalDelete)}
+          redirect= { () => deleteCollaborator(idDelete)}
         />
       )}
     </div>

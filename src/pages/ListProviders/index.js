@@ -194,7 +194,7 @@ export default function ListProviders() {
                         <td data-label="Produto Vendido">{item.prodVendido}</td>
                         <td data-label="Certificadora">{item.certificadora}</td>
                         <td data-label="Data do Certificado">{item.dataCert}</td>
-                        <td data-label="#">
+                        <td data-label="Ações">
                           <Link
                             className="action"
                             to={`/create-providers/${item.id}`}

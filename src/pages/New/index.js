@@ -47,7 +47,6 @@ export default function New() {
   const [idCollaborator, setIdCollaborator] = useState(false);
   const [idMachine, setIdMachine] = useState(false);
 
-
   useEffect(() => {
     async function loadCollaborators() {
       const userDetail = localStorage.getItem("@banawebPRO");
@@ -205,21 +204,17 @@ export default function New() {
     e.preventDefault();
 
     if (
-      idCollaborator && 
-      idMachine &&
       collaborators.length !== 0 &&
       machines.length !== 0 &&
+      idCollaborator &&
+      idMachine &&
       setor !== "" &&
       area !== "" &&
       andamento !== ""
-      ) {
+    ) {
       //Atualizando serviço
       const docRef = doc(db, "services", id);
       await updateDoc(docRef, {
-        collaborator: collaborators[collaboratorSelected].nome,
-        collaboratorId: collaborators[collaboratorSelected].id,
-        machine: machines[machineSelected].nome,
-        machineId: machines[machineSelected].id,
         setor: setor,
         area: area,
         andamento: andamento,
@@ -236,16 +231,13 @@ export default function New() {
           toast.error("Ops, erro ao atualizar esse serviço!");
           console.log(error);
         });
-
       return;
-    }
-
-    if(
-    collaborators.length !== 0 &&
-    machines.length !== 0 &&
-    setor !== "" &&
-    area !== "" &&
-    andamento !== ""
+    } else if (
+      collaborators.length !== 0 &&
+      machines.length !== 0 &&
+      setor !== "" &&
+      area !== "" &&
+      andamento !== ""
     ) {
       //Registrar um serviço
       await addDoc(collection(db, "services"), {
@@ -270,11 +262,11 @@ export default function New() {
           toast.error("Erro ao registrar o serviço, tente mais tarde!");
           console.log(error);
         });
-    }else{
+      return;
+    } else {
       console.log("NÃO FORAM ENCONTRADOS FUNCIONÁRIOS OU MAQUINARIA!");
       toast.error("Preencha todos os campos!");
     }
-    
   }
 
   return (
@@ -297,6 +289,20 @@ export default function New() {
             </span>
             {loadCollaborator ? (
               <input type="text" disabled={true} value="Carregando..." />
+            ) : idCollaborator ? (
+              <select
+                value={collaboratorSelected}
+                onChange={handleChangeCollaborator}
+                disabled={true}
+              >
+                {collaborators.map((item, index) => {
+                  return (
+                    <option key={index} value={index}>
+                      {item.nome}
+                    </option>
+                  );
+                })}
+              </select>
             ) : (
               <select
                 value={collaboratorSelected}
@@ -317,8 +323,25 @@ export default function New() {
             </span>
             {loadMachines ? (
               <input type="text" disabled={true} value="Carregando..." />
+            ) : idMachine ? (
+              <select
+                value={machineSelected}
+                onChange={handleChangeMachine}
+                disabled={true}
+              >
+                {machines.map((item, index) => {
+                  return (
+                    <option key={index} value={index}>
+                      {item.nome}
+                    </option>
+                  );
+                })}
+              </select>
             ) : (
-              <select value={machineSelected} onChange={handleChangeMachine}>
+              <select 
+                value={machineSelected} 
+                onChange={handleChangeMachine}
+              >
                 {machines.map((item, index) => {
                   return (
                     <option key={index} value={index}>
@@ -498,7 +521,12 @@ export default function New() {
               onChange={(e) => setDescricao(e.target.value)}
             />
 
-            <button type="submit">{id ? "Atualizar" : "Registrar"}</button>
+            {id ? (
+              <button type="submit">Atualizar</button>
+            ) : (
+              <button type="submit">Registrar</button>
+            )}
+          
           </form>
         </div>
       </div>
