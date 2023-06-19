@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 
 import Header from "../../components/Header";
 import Title from "../../components/Title";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./dashboard.css";
 import {
   BsCardText,
@@ -25,9 +25,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConnection";
 import { format } from "date-fns";
-import Modal from '../../components/ModalServices'
 import { toast } from "react-toastify";
-import { reload } from "firebase/auth";
 import ModalDeleteService from "../../components/ModalDeleteService";
 import ModalServices from "../../components/ModalServices";
 
@@ -35,7 +33,6 @@ const listRef = collection(db, "services");
 
 export default function Dashboard() {
   const [user, setUser] = useState({});
-  const navigate = useNavigate();
 
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
