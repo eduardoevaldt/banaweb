@@ -148,7 +148,6 @@ export default function Dashboard() {
     await deleteDoc(docRef)
     .then(() => {
       window.location.reload();
-      toast.success("Serviço deletado com sucesso!");
     })
     .catch((error) => {
       toast.error("Ops, erro ao deletar esse serviço!");

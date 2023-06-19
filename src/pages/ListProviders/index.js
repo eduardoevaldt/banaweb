@@ -131,7 +131,6 @@ export default function ListProviders() {
     await deleteDoc(docRef)
     .then(() => {
       window.location.reload();
-      toast.success("Fornecedor deletado com sucesso!");
     })
     .catch((error) => {
       toast.error("Ops, erro ao deletar esse fornecedor!");

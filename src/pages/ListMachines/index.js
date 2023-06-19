@@ -126,7 +126,6 @@ export default function ListMachines() {
     await deleteDoc(docRef)
     .then(() => {
       window.location.reload();
-      toast.success("Máquina deletada com sucesso!");
     })
     .catch((error) => {
       toast.error("Ops, erro ao deletar essa máquina!");

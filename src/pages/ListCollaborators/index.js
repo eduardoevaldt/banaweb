@@ -132,7 +132,6 @@ export default function ListCollaborators() {
     await deleteDoc(docRef)
     .then(() => {
       window.location.reload();
-      toast.success("Funcionário deletado com sucesso!");
     })
     .catch((error) => {
       toast.error("Ops, erro ao deletar esse funcionário!");
